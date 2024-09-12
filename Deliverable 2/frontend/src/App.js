@@ -12,6 +12,16 @@ const router = createBrowserRouter([
         errorElement: <div>404 Not Found</div>
     },
     {
+        path: "/profile/:id",
+        element: <Profile />,
+        errorElement: <div>404 Not Found</div>
+    },
+    {
+        path: "/playlist/:id",
+        element: <Playlist />,
+        errorElement: <div>404 Not Found</div>
+    },
+    {
         path: "/profile",
         element: <Profile />,
         errorElement: <div>404 Not Found</div>
@@ -30,7 +40,6 @@ const router = createBrowserRouter([
 
 class App extends React.Component {
     render() {
-        console.log("App here");
         return (
             <RouterProvider router={router}>
             </RouterProvider>

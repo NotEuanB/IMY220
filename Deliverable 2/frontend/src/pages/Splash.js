@@ -4,7 +4,6 @@ import Register from '../components/Register.js';
 
 class Splash extends React.Component {
     render() {
-        console.log("hi");
         return (
             <div>
                 <h1>Splash</h1>

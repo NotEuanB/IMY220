@@ -6,7 +6,6 @@ import Following from '../components/Following.js';
 import EditProfile from '../components/EditProfile.js';
 import CreatePlaylist from '../components/CreatePlaylist.js';
 
-
 class Profile extends React.Component {
     render() {
         const user = 
