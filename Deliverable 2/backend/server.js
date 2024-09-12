@@ -1,12 +1,17 @@
-import express from "express";
+const express = require('express');
 
-//CREATE APP
+// Create app
 const app = express();
 
-//SERVE A STATIC PAGE IN THE PUBLIC DIRECTORY
-app.use(express.static("frontend/public"));
+// Serve static files from the React app
+app.use(express.static('./frontend/public'));
 
-//PORT TO LISTEN TO
+// Catch-all route to serve index.html for all pages
+app.get('*', (req, res) => {
+    res.sendFile('index.html', { root: './frontend/public' });
+});
+
+// Port to listen to
 app.listen(3000, () => {
     console.log("Listening on localhost:3000");
 });
