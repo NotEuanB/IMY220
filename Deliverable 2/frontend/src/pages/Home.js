@@ -5,35 +5,9 @@ import PlaylistFeed from '../components/PlaylistFeed.js';
 import SearchInput from '../components/SearchInput.js';
 
 class Home extends React.Component {
-    render() {
-        const songsData = [
-            {
-                title: "Dummy Song Title 1",
-                link: "www.dummylink1.co.za",
-                imageUrl: "/assets/images/placeholder.png"
-            },
-            {
-                title: "Dummy Song Title 2",
-                link: "www.dummylink2.co.za",
-                imageUrl: "/assets/images/placeholder.png"
-            },
-            {
-                title: "Dummy Song Title 3",
-                link: "www.dummylink3.co.za",
-                imageUrl: "/assets/images/placeholder.png"
-            },
-            {
-                title: "Dummy Song Title 4",
-                link: "www.dummylink4.co.za",
-                imageUrl: "/assets/images/placeholder.png"
-            },
-            {
-                title: "Dummy Song Title 5",
-                link: "www.dummylink5.co.za",
-                imageUrl: "/assets/images/placeholder.png"
-            }
-        ];
-        const playlistData = [
+    state = {
+        songs: [],
+        playlistData: [
             {
                 title: "Dummy Playlist 1",
                 description: "Dummy description 1",
@@ -60,14 +34,33 @@ class Home extends React.Component {
                 imageUrl: "/assets/images/placeholder.png"
               }
         ]
+    };
 
+    componentDidMount() {
+        fetch('/api/songs')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                this.setState({ songs: data });
+            })
+            .catch(error => {
+                console.error('Error fetching songs:', error);
+            });
+    }
+
+
+    render() {
         return (
             <div>
                 <h1>Home</h1>
                 <Header />
                 <SearchInput />
-                <SongFeed songs={ songsData } />
-                <PlaylistFeed playlists={ playlistData } />
+                <SongFeed songs={ this.state.songs } />
+                <PlaylistFeed playlists={ this.state.playlistData } />
             </div>
         );
     }
