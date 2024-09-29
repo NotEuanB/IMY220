@@ -1,4 +1,5 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import Header from "../components/Header.js";
 import ProfileComponent from '../components/ProfileComponent.js';
 import Followers from '../components/Followers.js';
@@ -7,53 +8,37 @@ import EditProfile from '../components/EditProfile.js';
 import CreatePlaylist from '../components/CreatePlaylist.js';
 
 class Profile extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            user: null,
+        };
+    }
+
+    async componentDidMount() {
+        const { id } = this.props.params;
+        await this.fetchUser(id);
+    }
+
+    fetchUser = async (id) => {
+        try {
+            const response = await fetch(`/api/users/${id}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            this.setState({ user: data });
+        } catch (error) {
+            console.log("Error fetching user data:", error);
+        }
+    };
+
     render() {
-        const user = 
-            {
-                name: "Profile Tester",
-                description: "This is a profile test",
-                imageUrl: "/assets/images/placeholder.png",
-                playlists: [
-                    {
-                        title: "Dummy Playlist 1",
-                        description: "Dummy description 1",
-                        imageUrl: "/assets/images/placeholder.png"
-                      },
-                      {
-                        title: "Dummy Playlist 2",
-                        description: "Dummy description 2",
-                        imageUrl: "/assets/images/placeholder.png"
-                      }
-                ],
-                followers: [
-                    {
-                        name: "Dummy 1",
-                        imageUrl: "/assets/images/placeholder.png"
-                    },
-                    {
-                        name: "Dummy 2",
-                        imageUrl: "/assets/images/placeholder.png"
-                    },
-                    {
-                        name: "Dummy 3",
-                        imageUrl: "/assets/images/placeholder.png"
-                    }
-                ],
-                following: [
-                    {
-                        name: "Dummy 1",
-                        imageUrl: "/assets/images/placeholder.png"
-                    },
-                    {
-                        name: "Dummy 2",
-                        imageUrl: "/assets/images/placeholder.png"
-                    },
-                    {
-                        name: "Dummy 3",
-                        imageUrl: "/assets/images/placeholder.png"
-                    }
-                ]
-            };
+        const { user } = this.state;
+
+        if (!user) {
+            return <div>Loading...</div>;
+        }
 
         return (
             <div>
@@ -69,4 +54,8 @@ class Profile extends React.Component {
     }
 }
 
-export default Profile;
+const ProfileWithParams = (props) => {
+    return <Profile {...props} params={useParams()} />;
+};
+
+export default ProfileWithParams;

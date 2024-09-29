@@ -28,19 +28,29 @@ async function startServer() {
         }
     });
 
-    app.get('/api/playlists', async (req, res) => {
+    app.get('/api/playlist/:id', async (req, res) => {
+        const { id } = req.params;
         try {
-            const playlists = await PlaylistCollection.find().toArray();
-            res.json(playlists);
+            const playlist = await PlaylistCollection.findOne({ playlistID: id });
+            if (playlist) {
+                res.json(playlist);
+            } else {
+                res.status(404).send("Playlist not found");
+            }
         } catch (err) {
             res.status(500).send(err);
         }
     });
 
-    app.get('/api/users', async (req, res) => {
+    app.get('/api/users/:id', async (req, res) => {
+        const { id } = req.params;
         try {
-            const users = await UserCollection.find().toArray();
-            res.json(users);
+            const user = await UserCollection.findOne({ id: id });
+            if (user) {
+                res.json(user);
+            } else {
+                res.status(404).send("User not found");
+            }
         } catch (err) {
             res.status(500).send(err);
         }

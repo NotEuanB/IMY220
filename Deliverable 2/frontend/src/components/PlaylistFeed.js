@@ -11,7 +11,7 @@ class PlaylistFeed extends React.Component {
 
                 {playlists.map((playlist, index) => (
                   <div key={index}>
-                    <PlaylistPreview title={playlist.title} description={playlist.description} imageUrl={playlist.imageUrl} />
+                    <PlaylistPreview name={playlist.name} description={playlist.description} imageUrl={playlist.imageUrl} />
                     <hr />
                   </div>
                 ))}

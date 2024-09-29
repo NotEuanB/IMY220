@@ -1,48 +1,22 @@
 import React from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useParams } from 'react-router-dom';
 import Home from './pages/Home';
 import Playlist from './pages/Playlist';
 import Profile from './pages/Profile';
 import Splash from './pages/Splash';
 
-const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <Splash />,
-        errorElement: <div>404 Not Found</div>
-    },
-    {
-        path: "/profile/:id",
-        element: <Profile />,
-        errorElement: <div>404 Not Found</div>
-    },
-    {
-        path: "/playlist/:id",
-        element: <Playlist />,
-        errorElement: <div>404 Not Found</div>
-    },
-    {
-        path: "/profile",
-        element: <Profile />,
-        errorElement: <div>404 Not Found</div>
-    },
-    {
-        path: "/playlist",
-        element: <Playlist />,
-        errorElement: <div>404 Not Found</div>
-    },
-    {
-        path: "/home",
-        element: <Home />,
-        errorElement: <div>404 Not Found</div>
-    }
-]);
-
 class App extends React.Component {
     render() {
         return (
-            <RouterProvider router={router}>
-            </RouterProvider>
+            <Router>
+                <Routes>
+                    <Route path="/" element={ <Splash /> } />
+                    <Route path="/profile/:id" element={ <Profile /> } />
+                    <Route path="/playlist/:id" element={ <Playlist /> } />
+                    <Route path="/home" element={ <Home /> } />
+                    <Route path="*" element={ <div>404 Not Found</div> } />
+                </Routes>
+            </Router>
                 
         );
     }

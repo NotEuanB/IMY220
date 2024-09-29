@@ -60,57 +60,71 @@ function _startServer() {
               return _ref.apply(this, arguments);
             };
           }());
-          app.get('/api/playlists', /*#__PURE__*/function () {
+          app.get('/api/playlist/:id', /*#__PURE__*/function () {
             var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(req, res) {
-              var playlists;
+              var id, playlist;
               return _regeneratorRuntime().wrap(function _callee2$(_context2) {
                 while (1) switch (_context2.prev = _context2.next) {
                   case 0:
-                    _context2.prev = 0;
-                    _context2.next = 3;
-                    return PlaylistCollection.find().toArray();
-                  case 3:
-                    playlists = _context2.sent;
-                    res.json(playlists);
-                    _context2.next = 10;
+                    id = req.params.id;
+                    _context2.prev = 1;
+                    _context2.next = 4;
+                    return PlaylistCollection.findOne({
+                      playlistID: id
+                    });
+                  case 4:
+                    playlist = _context2.sent;
+                    if (playlist) {
+                      res.json(playlist);
+                    } else {
+                      res.status(404).send("Playlist not found");
+                    }
+                    _context2.next = 11;
                     break;
-                  case 7:
-                    _context2.prev = 7;
-                    _context2.t0 = _context2["catch"](0);
+                  case 8:
+                    _context2.prev = 8;
+                    _context2.t0 = _context2["catch"](1);
                     res.status(500).send(_context2.t0);
-                  case 10:
+                  case 11:
                   case "end":
                     return _context2.stop();
                 }
-              }, _callee2, null, [[0, 7]]);
+              }, _callee2, null, [[1, 8]]);
             }));
             return function (_x3, _x4) {
               return _ref2.apply(this, arguments);
             };
           }());
-          app.get('/api/users', /*#__PURE__*/function () {
+          app.get('/api/users/:id', /*#__PURE__*/function () {
             var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(req, res) {
-              var users;
+              var id, user;
               return _regeneratorRuntime().wrap(function _callee3$(_context3) {
                 while (1) switch (_context3.prev = _context3.next) {
                   case 0:
-                    _context3.prev = 0;
-                    _context3.next = 3;
-                    return UserCollection.find().toArray();
-                  case 3:
-                    users = _context3.sent;
-                    res.json(users);
-                    _context3.next = 10;
+                    id = req.params.id;
+                    _context3.prev = 1;
+                    _context3.next = 4;
+                    return UserCollection.findOne({
+                      id: id
+                    });
+                  case 4:
+                    user = _context3.sent;
+                    if (user) {
+                      res.json(user);
+                    } else {
+                      res.status(404).send("User not found");
+                    }
+                    _context3.next = 11;
                     break;
-                  case 7:
-                    _context3.prev = 7;
-                    _context3.t0 = _context3["catch"](0);
+                  case 8:
+                    _context3.prev = 8;
+                    _context3.t0 = _context3["catch"](1);
                     res.status(500).send(_context3.t0);
-                  case 10:
+                  case 11:
                   case "end":
                     return _context3.stop();
                 }
-              }, _callee3, null, [[0, 7]]);
+              }, _callee3, null, [[1, 8]]);
             }));
             return function (_x5, _x6) {
               return _ref3.apply(this, arguments);
