@@ -20,12 +20,12 @@ function startServer() {
   return _startServer.apply(this, arguments);
 }
 function _startServer() {
-  _startServer = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+  _startServer = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
     var db, SongCollection, PlaylistCollection, UserCollection, PORT;
-    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-      while (1) switch (_context5.prev = _context5.next) {
+    return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+      while (1) switch (_context9.prev = _context9.next) {
         case 0:
-          _context5.next = 2;
+          _context9.next = 2;
           return client.connect();
         case 2:
           console.info("Connected to MongoDB");
@@ -41,7 +41,9 @@ function _startServer() {
                   case 0:
                     _context.prev = 0;
                     _context.next = 3;
-                    return SongCollection.find().toArray();
+                    return SongCollection.find().sort({
+                      dateAdded: -1
+                    }).toArray();
                   case 3:
                     songs = _context.sent;
                     res.json(songs);
@@ -61,36 +63,48 @@ function _startServer() {
               return _ref.apply(this, arguments);
             };
           }());
-          app.get('/api/playlist/:id', /*#__PURE__*/function () {
+          app.get('/api/playlists/:id', /*#__PURE__*/function () {
             var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(req, res) {
-              var id, playlist;
+              var id, user, playlistIDs, playlists;
               return _regeneratorRuntime().wrap(function _callee2$(_context2) {
                 while (1) switch (_context2.prev = _context2.next) {
                   case 0:
                     id = req.params.id;
                     _context2.prev = 1;
                     _context2.next = 4;
-                    return PlaylistCollection.findOne({
+                    return UserCollection.findOne({
                       _id: id
                     });
                   case 4:
-                    playlist = _context2.sent;
-                    if (playlist) {
-                      res.json(playlist);
-                    } else {
-                      res.status(404).send("Playlist not found");
+                    user = _context2.sent;
+                    if (user) {
+                      _context2.next = 7;
+                      break;
                     }
-                    _context2.next = 11;
+                    return _context2.abrupt("return", res.status(404).send("User not found"));
+                  case 7:
+                    // Get the user's playlist IDs
+                    playlistIDs = user.playlistIDs || []; // Find the playlists by their IDs
+                    _context2.next = 10;
+                    return PlaylistCollection.find({
+                      playlistID: {
+                        $in: playlistIDs
+                      }
+                    }).toArray();
+                  case 10:
+                    playlists = _context2.sent;
+                    res.json(playlists);
+                    _context2.next = 17;
                     break;
-                  case 8:
-                    _context2.prev = 8;
+                  case 14:
+                    _context2.prev = 14;
                     _context2.t0 = _context2["catch"](1);
                     res.status(500).send(_context2.t0);
-                  case 11:
+                  case 17:
                   case "end":
                     return _context2.stop();
                 }
-              }, _callee2, null, [[1, 8]]);
+              }, _callee2, null, [[1, 14]]);
             }));
             return function (_x3, _x4) {
               return _ref2.apply(this, arguments);
@@ -150,7 +164,7 @@ function _startServer() {
                       imageUrl: '/assets/images/placeholder.png',
                       username: username,
                       email: email,
-                      password: password,
+                      hashedPassword: hashedPassword,
                       playlistIDs: [],
                       followerIDs: [],
                       followingIDs: []
@@ -175,6 +189,189 @@ function _startServer() {
               return _ref4.apply(this, arguments);
             };
           }());
+          app.post('/api/login', /*#__PURE__*/function () {
+            var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5(req, res) {
+              var _req$body2, email, password, user, isPasswordValid;
+              return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+                while (1) switch (_context5.prev = _context5.next) {
+                  case 0:
+                    _req$body2 = req.body, email = _req$body2.email, password = _req$body2.password;
+                    _context5.prev = 1;
+                    _context5.next = 4;
+                    return UserCollection.findOne({
+                      email: email
+                    });
+                  case 4:
+                    user = _context5.sent;
+                    if (user) {
+                      _context5.next = 7;
+                      break;
+                    }
+                    return _context5.abrupt("return", res.status(401).send("Invalid email or password"));
+                  case 7:
+                    isPasswordValid = password === user.password;
+                    if (isPasswordValid) {
+                      _context5.next = 10;
+                      break;
+                    }
+                    return _context5.abrupt("return", res.status(401).send("Invalid email or password"));
+                  case 10:
+                    res.status(200).json({
+                      userId: user._id.toString()
+                    });
+                    _context5.next = 16;
+                    break;
+                  case 13:
+                    _context5.prev = 13;
+                    _context5.t0 = _context5["catch"](1);
+                    res.status(500).send(_context5.t0);
+                  case 16:
+                  case "end":
+                    return _context5.stop();
+                }
+              }, _callee5, null, [[1, 13]]);
+            }));
+            return function (_x9, _x10) {
+              return _ref5.apply(this, arguments);
+            };
+          }());
+          app.get('/api/user/:userId/following/playlists', /*#__PURE__*/function () {
+            var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6(req, res) {
+              var userId, user, friends, playlists;
+              return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+                while (1) switch (_context6.prev = _context6.next) {
+                  case 0:
+                    _context6.prev = 0;
+                    userId = req.params.userId;
+                    _context6.next = 4;
+                    return UserCollection.findOne({
+                      _id: userId
+                    });
+                  case 4:
+                    user = _context6.sent;
+                    if (user) {
+                      _context6.next = 7;
+                      break;
+                    }
+                    return _context6.abrupt("return", res.status(404).send('User not found'));
+                  case 7:
+                    friends = user.followingIDs || [];
+                    _context6.next = 10;
+                    return PlaylistCollection.find({
+                      userID: {
+                        $in: friends
+                      }
+                    }).toArray();
+                  case 10:
+                    playlists = _context6.sent;
+                    res.json(playlists);
+                    _context6.next = 18;
+                    break;
+                  case 14:
+                    _context6.prev = 14;
+                    _context6.t0 = _context6["catch"](0);
+                    console.error('Error fetching playlists:', _context6.t0);
+                    res.status(500).send(_context6.t0);
+                  case 18:
+                  case "end":
+                    return _context6.stop();
+                }
+              }, _callee6, null, [[0, 14]]);
+            }));
+            return function (_x11, _x12) {
+              return _ref6.apply(this, arguments);
+            };
+          }());
+          app.get('/api/users/:id/followers', /*#__PURE__*/function () {
+            var _ref7 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7(req, res) {
+              var id, user, followers;
+              return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+                while (1) switch (_context7.prev = _context7.next) {
+                  case 0:
+                    id = req.params.id;
+                    _context7.prev = 1;
+                    _context7.next = 4;
+                    return UserCollection.findOne({
+                      _id: id
+                    });
+                  case 4:
+                    user = _context7.sent;
+                    if (user) {
+                      _context7.next = 7;
+                      break;
+                    }
+                    return _context7.abrupt("return", res.status(404).send("User not found"));
+                  case 7:
+                    _context7.next = 9;
+                    return UserCollection.find({
+                      _id: {
+                        $in: user.followerIDs
+                      }
+                    }).toArray();
+                  case 9:
+                    followers = _context7.sent;
+                    res.json(followers);
+                    _context7.next = 16;
+                    break;
+                  case 13:
+                    _context7.prev = 13;
+                    _context7.t0 = _context7["catch"](1);
+                    res.status(500).send(_context7.t0);
+                  case 16:
+                  case "end":
+                    return _context7.stop();
+                }
+              }, _callee7, null, [[1, 13]]);
+            }));
+            return function (_x13, _x14) {
+              return _ref7.apply(this, arguments);
+            };
+          }());
+          app.get('/api/users/:id/following', /*#__PURE__*/function () {
+            var _ref8 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(req, res) {
+              var id, user, following;
+              return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+                while (1) switch (_context8.prev = _context8.next) {
+                  case 0:
+                    id = req.params.id;
+                    _context8.prev = 1;
+                    _context8.next = 4;
+                    return UserCollection.findOne({
+                      _id: id
+                    });
+                  case 4:
+                    user = _context8.sent;
+                    if (user) {
+                      _context8.next = 7;
+                      break;
+                    }
+                    return _context8.abrupt("return", res.status(404).send("User not found"));
+                  case 7:
+                    _context8.next = 9;
+                    return UserCollection.find({
+                      _id: {
+                        $in: user.followingIDs
+                      }
+                    }).toArray();
+                  case 9:
+                    following = _context8.sent;
+                    res.json(following);
+                    _context8.next = 16;
+                    break;
+                  case 13:
+                    _context8.prev = 13;
+                    _context8.t0 = _context8["catch"](1);
+                    res.status(500).send(_context8.t0);
+                  case 16:
+                  case "end":
+                    return _context8.stop();
+                }
+              }, _callee8, null, [[1, 13]]);
+            }));
+            return function (_x15, _x16) {
+              return _ref8.apply(this, arguments);
+            };
+          }());
 
           // Catch-all route to serve index.html for all pages
           app.get('*', function (req, res) {
@@ -188,11 +385,11 @@ function _startServer() {
           app.listen(PORT, function () {
             console.log("Server is running on port ".concat(PORT));
           });
-        case 14:
+        case 18:
         case "end":
-          return _context5.stop();
+          return _context9.stop();
       }
-    }, _callee5);
+    }, _callee9);
   }));
   return _startServer.apply(this, arguments);
 }

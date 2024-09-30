@@ -13,7 +13,6 @@ class SongFeed extends React.Component {
                     <Song 
                       title={song.title} 
                       link={song.link} 
-                      imageUrl={song.imageUrl} 
                     />
                     <hr />
                   </div>

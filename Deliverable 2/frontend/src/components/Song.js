@@ -2,12 +2,20 @@ import React from "react";
 
 class Song extends React.Component {
     render() {
-        const { title, link, imageUrl } = this.props;
+        const { title, link } = this.props;
+        const trackId = link.split('/track/')[1].split('?')[0]; // Extract track ID from link
+        const embedUrl = `https://open.spotify.com/embed/track/${trackId}`;
+
         return (
             <div>
-                <img src={imageUrl} alt="Placeholder" style={{ width: '100px' }} />
                 <h3>{title}</h3>
-                <p>{link}</p>
+                <iframe
+                    src={embedUrl}
+                    width="600"
+                    height="80"
+                    allowtransparency="true"
+                    allow="encrypted-media"
+                ></iframe>
             </div>
         );
     }

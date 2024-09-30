@@ -2,11 +2,11 @@ import React from "react";
 
 class ProfilePreview extends React.Component {
     render() {
-        const { image, name } = this.props;
+        const { image, username } = this.props;
         return (
             <div>
                 <img src={ image } alt="Placeholder" style={{ width: '50px' }} />
-                <span>{ name }</span>
+                <span>{ username }</span>
             </div>
         );
     }

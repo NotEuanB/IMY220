@@ -44,9 +44,9 @@ class Profile extends React.Component {
             <div>
                 <h1>Profile</h1>
                 <Header />
-                <ProfileComponent name={ user.name } description={ user.description } imageUrl={ user.imageUrl } playlists={ user.playlists }/>
-                <Followers followers={ user.followers }/>
-                <Following following={ user.following }/>
+                <ProfileComponent username={ user.username } description={ user.description } imageUrl={ user.imageUrl } playlistIDs={ user.playlistIDs }/>
+                <Followers followers={ user.followerIDs }/>
+                <Following following={ user.followingIDs }/>
                 <EditProfile name={ user.name } description={ user.description }/>
                 <CreatePlaylist />
             </div>

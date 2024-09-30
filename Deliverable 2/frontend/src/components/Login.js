@@ -1,10 +1,11 @@
 import React from "react";
+import { setCookie, getCookie, deleteCookie } from '../utils/cookie';
 
 class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: '',
+            email: '',
             password: '',
             problems: {}
         }
@@ -19,8 +20,8 @@ class Login extends React.Component {
     validate = () => {
         const problems = {};
 
-        if (!this.state.username) {
-            problems.username = "Username is empty";
+        if (!this.state.email) {
+            problems.email = "Email is empty";
         }
 
         if (!this.state.password) {
@@ -33,10 +34,31 @@ class Login extends React.Component {
         return Object.keys(problems).length === 0;
     }
 
-    handleSubmit = (event) => {
+    handleSubmit = async (event) => {
         event.preventDefault();
         if (this.validate()) {
-            console.log('Form is valid');
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: this.state.email,
+                        password: this.state.password
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setCookie('userId', data.userId, 1); 
+                    window.location.href = '/home'; 
+                } else {
+                    alert("Login failed");
+                }
+           } catch (error) {
+                console.error("Error:", error);
+           }
         } else {
             this.setState((prevState) => {
                 console.log(prevState.problems);
@@ -48,9 +70,9 @@ class Login extends React.Component {
     render() {
         return (
             <form onSubmit={ this.handleSubmit }>
-                <label htmlFor="usernameLogin">Username:</label>
-                <input type="text" placeholder="Username here..." id="usernameLogin" name="username" value={this.state.username} onChange={ this.handleChange }/>
-                {this.state.problems.username && <span>{this.state.problems.username}</span>}
+                <label htmlFor="emailLogin">Email:</label>
+                <input type="text" placeholder="Email here..." id="emailLogin" name="email" value={this.state.email} onChange={ this.handleChange }/>
+                {this.state.problems.email && <span>{this.state.problems.email}</span>}
                 <br/>
                 <label htmlFor="passwordLogin">Password:</label>
                 <input type="password" placeholder="Password here..." id="passwordLogin" name="password" value={this.state.password}  onChange={ this.handleChange }/>

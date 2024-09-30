@@ -3,6 +3,7 @@ import Header from "../components/Header.js";
 import SongFeed from '../components/SongFeed.js';
 import PlaylistFeed from '../components/PlaylistFeed.js';
 import SearchInput from '../components/SearchInput.js';
+import { setCookie, getCookie, deleteCookie } from '../utils/cookie';
 
 class Home extends React.Component {
     state = {
@@ -32,7 +33,8 @@ class Home extends React.Component {
     }
 
     fetchPlaylists = () => {
-        fetch('/api/playlists')
+        const userId = getCookie('userId');
+        fetch(`/api/user/${userId}/following/playlists`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
