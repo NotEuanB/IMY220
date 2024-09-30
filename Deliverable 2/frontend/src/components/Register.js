@@ -39,10 +39,29 @@ class Register extends React.Component {
         return Object.keys(problems).length === 0;
     };
 
-    handleSubmit = (event) => {
+    handleSubmit = async (event) => {
         event.preventDefault();
         if (this.validate()) {
-            console.log('Form is valid');
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: this.state.username,
+                        password: this.state.password,
+                        email: this.state.email
+                    })
+                });
+                if (response.ok) {
+                    console.log('User registered successfully');
+                } else {
+                    console.log('Registration failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
         } else {
             this.setState((prevState) => {
                 console.log(prevState.problems);

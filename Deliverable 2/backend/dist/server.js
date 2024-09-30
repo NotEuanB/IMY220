@@ -12,6 +12,7 @@ var client = new MongoClient(url);
 
 // Create app
 var app = express();
+app.use(express.json());
 
 // Serve static files from the React app
 app.use(express["static"]('./frontend/public'));
@@ -19,12 +20,12 @@ function startServer() {
   return _startServer.apply(this, arguments);
 }
 function _startServer() {
-  _startServer = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+  _startServer = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
     var db, SongCollection, PlaylistCollection, UserCollection, PORT;
-    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-      while (1) switch (_context4.prev = _context4.next) {
+    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+      while (1) switch (_context5.prev = _context5.next) {
         case 0:
-          _context4.next = 2;
+          _context5.next = 2;
           return client.connect();
         case 2:
           console.info("Connected to MongoDB");
@@ -70,7 +71,7 @@ function _startServer() {
                     _context2.prev = 1;
                     _context2.next = 4;
                     return PlaylistCollection.findOne({
-                      playlistID: id
+                      _id: id
                     });
                   case 4:
                     playlist = _context2.sent;
@@ -105,7 +106,7 @@ function _startServer() {
                     _context3.prev = 1;
                     _context3.next = 4;
                     return UserCollection.findOne({
-                      id: id
+                      _id: id
                     });
                   case 4:
                     user = _context3.sent;
@@ -130,6 +131,50 @@ function _startServer() {
               return _ref3.apply(this, arguments);
             };
           }());
+          app.post('/api/register', /*#__PURE__*/function () {
+            var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(req, res) {
+              var _req$body, username, password, email, count, newId, newUser;
+              return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+                while (1) switch (_context4.prev = _context4.next) {
+                  case 0:
+                    _req$body = req.body, username = _req$body.username, password = _req$body.password, email = _req$body.email;
+                    _context4.prev = 1;
+                    _context4.next = 4;
+                    return UserCollection.countDocuments();
+                  case 4:
+                    count = _context4.sent;
+                    newId = "user0".concat(count + 1);
+                    newUser = {
+                      _id: newId.toString(),
+                      description: '',
+                      imageUrl: '/assets/images/placeholder.png',
+                      username: username,
+                      email: email,
+                      password: password,
+                      playlistIDs: [],
+                      followerIDs: [],
+                      followingIDs: []
+                    };
+                    _context4.next = 9;
+                    return UserCollection.insertOne(newUser);
+                  case 9:
+                    res.status(201).send("User registered successfully");
+                    _context4.next = 15;
+                    break;
+                  case 12:
+                    _context4.prev = 12;
+                    _context4.t0 = _context4["catch"](1);
+                    res.status(500).send(_context4.t0);
+                  case 15:
+                  case "end":
+                    return _context4.stop();
+                }
+              }, _callee4, null, [[1, 12]]);
+            }));
+            return function (_x7, _x8) {
+              return _ref4.apply(this, arguments);
+            };
+          }());
 
           // Catch-all route to serve index.html for all pages
           app.get('*', function (req, res) {
@@ -143,11 +188,11 @@ function _startServer() {
           app.listen(PORT, function () {
             console.log("Server is running on port ".concat(PORT));
           });
-        case 13:
+        case 14:
         case "end":
-          return _context4.stop();
+          return _context5.stop();
       }
-    }, _callee4);
+    }, _callee5);
   }));
   return _startServer.apply(this, arguments);
 }

@@ -6,6 +6,7 @@ const client = new MongoClient(url);
 
 // Create app
 const app = express();
+app.use(express.json()); 
 
 // Serve static files from the React app
 app.use(express.static('./frontend/public'));
@@ -31,7 +32,7 @@ async function startServer() {
     app.get('/api/playlist/:id', async (req, res) => {
         const { id } = req.params;
         try {
-            const playlist = await PlaylistCollection.findOne({ playlistID: id });
+            const playlist = await PlaylistCollection.findOne({ _id: id });
             if (playlist) {
                 res.json(playlist);
             } else {
@@ -45,12 +46,35 @@ async function startServer() {
     app.get('/api/users/:id', async (req, res) => {
         const { id } = req.params;
         try {
-            const user = await UserCollection.findOne({ id: id });
+            const user = await UserCollection.findOne({ _id: id });
             if (user) {
                 res.json(user);
             } else {
                 res.status(404).send("User not found");
             }
+        } catch (err) {
+            res.status(500).send(err);
+        }
+    });
+
+    app.post('/api/register', async (req, res) => {
+        const { username, password, email } = req.body;
+        try {
+            const count = await UserCollection.countDocuments();
+            const newId = `user0${count + 1}`;
+
+            const newUser = {
+                _id: newId.toString(), 
+                description: '', 
+                imageUrl: '/assets/images/placeholder.png', 
+                username, 
+                email,
+                password,
+                playlistIDs: [],
+                followerIDs: [],
+                followingIDs: [] };
+            await UserCollection.insertOne(newUser);
+            res.status(201).send("User registered successfully");
         } catch (err) {
             res.status(500).send(err);
         }
