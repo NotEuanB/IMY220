@@ -5,17 +5,21 @@ class PlaylistFeed extends React.Component {
     render() {
         const { playlists } = this.props;
 
-        return(
+        return (
             <div>
                 <h2>Playlist Feed</h2>
 
                 {playlists.map((playlist, index) => (
-                  <div key={index}>
-                    <PlaylistPreview name={playlist.name} description={playlist.description} imageUrl={playlist.imageUrl} />
-                    <hr />
-                  </div>
+                    <div key={index}>
+                        <PlaylistPreview 
+                            id={playlist.playlistID} 
+                            name={playlist.name} 
+                            description={playlist.description} 
+                            imageUrl={playlist.imageUrl} 
+                        />
+                        <hr />
+                    </div>
                 ))}
-
             </div>
         );
     }

@@ -1,6 +1,47 @@
 import React from "react";
 import { setCookie, getCookie, deleteCookie } from '../utils/cookie';
 
+const styles = {
+    form: {
+        backgroundColor: '#fff',
+        padding: '20px',
+        margin: '20px auto',
+        borderRadius: '8px',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        maxWidth: '400px',
+        textAlign: 'left'
+    },
+    formLabel: {
+        display: 'block',
+        marginBottom: '8px',
+        fontWeight: 'bold',
+        color: '#0A0759'
+    },
+    formInput: {
+        width: 'calc(100% - 20px)',
+        padding: '8px',
+        marginBottom: '10px',
+        border: '1px solid #ccc',
+        borderRadius: '4px'
+    },
+    formButton: {
+        width: '100%',
+        padding: '10px',
+        backgroundColor: '#007bff',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer'
+    },
+    formButtonHover: {
+        backgroundColor: '#0056b3'
+    },
+    formSpan: {
+        color: 'red',
+        fontSize: '12px'
+    }
+};
+
 class Login extends React.Component {
     constructor(props) {
         super(props);
@@ -10,7 +51,6 @@ class Login extends React.Component {
             problems: {}
         }
     }
-
 
     handleChange = (event) => {
         const { name, value } = event.target;
@@ -69,16 +109,16 @@ class Login extends React.Component {
 
     render() {
         return (
-            <form onSubmit={ this.handleSubmit }>
-                <label htmlFor="emailLogin">Email:</label>
-                <input type="text" placeholder="Email here..." id="emailLogin" name="email" value={this.state.email} onChange={ this.handleChange }/>
-                {this.state.problems.email && <span>{this.state.problems.email}</span>}
+            <form onSubmit={ this.handleSubmit } style={styles.form}>
+                <label htmlFor="emailLogin" style={styles.formLabel}>Email:</label>
+                <input type="text" placeholder="Email here..." id="emailLogin" name="email" value={this.state.email} onChange={ this.handleChange } style={styles.formInput}/>
+                {this.state.problems.email && <span style={styles.formSpan}>{this.state.problems.email}</span>}
                 <br/>
-                <label htmlFor="passwordLogin">Password:</label>
-                <input type="password" placeholder="Password here..." id="passwordLogin" name="password" value={this.state.password}  onChange={ this.handleChange }/>
-                {this.state.problems.password && <span>{this.state.problems.password}</span>}
+                <label htmlFor="passwordLogin" style={styles.formLabel}>Password:</label>
+                <input type="password" placeholder="Password here..." id="passwordLogin" name="password" value={this.state.password}  onChange={ this.handleChange } style={styles.formInput}/>
+                {this.state.problems.password && <span style={styles.formSpan}>{this.state.problems.password}</span>}
                 <br/>
-                <button type="submit">Login</button>
+                <button type="submit" style={styles.formButton}>Login</button>
             </form>
         );
     }

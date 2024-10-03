@@ -20,6 +20,7 @@ async function startServer() {
     const PlaylistCollection = db.collection('Playlists');
     const UserCollection = db.collection('Users');
 
+    // Get all of the songs in the SONG document
     app.get('/api/songs', async (req, res) => {
         try {
             const songs = await SongCollection.find().sort({ dateAdded: -1 }).toArray();
@@ -29,6 +30,21 @@ async function startServer() {
         }
     });
 
+    // Get a specific user with the given ID
+    app.get('/api/users/:id', async (req, res) => {
+        const { id } = req.params;
+        try {
+            const user = await UserCollection.findOne({ _id: id });
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+            res.status(200).json(user);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    });
+
+    // This gets the playlists of a specific user
     app.get('/api/playlists/:id', async (req, res) => {
         const { id } = req.params;
         try {
@@ -51,20 +67,48 @@ async function startServer() {
         }
     });
 
-    app.get('/api/users/:id', async (req, res) => {
+    // This gets a spevific playlist on the playlist ID
+    app.get('/api/playlist/:id', async (req, res) => {
         const { id } = req.params;
         try {
-            const user = await UserCollection.findOne({ _id: id });
-            if (user) {
-                res.json(user);
-            } else {
-                res.status(404).send("User not found");
+            // Find the user by ID
+            const playlist = await PlaylistCollection.findOne({ playlistID: id });
+            
+            if (!playlist) {
+                return res.status(404).send("playlist not found");
             }
+
+    
+            res.json(playlist);
         } catch (err) {
             res.status(500).send(err);
         }
     });
 
+    // This finds the songs from the specific playlist with the user ID
+    app.get('/api/playlist/:id/songs', async (req, res) => {
+        const { id } = req.params;
+        try {
+            // Find the playlist by ID
+            const playlist = await PlaylistCollection.findOne({ playlistID: id });
+
+            if (!playlist) {
+                return res.status(404).send("Playlist not found");
+            }
+
+            // Assuming the playlist document contains an array of song IDs
+            const songIDs = playlist.songIDs || [];
+
+            // Fetch the songs by their IDs
+            const songs = await SongCollection.find({ songID: { $in: songIDs } }).toArray();
+
+            res.json(songs);
+        } catch (err) {
+            res.status(500).send(err);
+        }
+    });
+
+    // Register
     app.post('/api/register', async (req, res) => {
         const { username, password, email } = req.body;
         try {
@@ -89,6 +133,7 @@ async function startServer() {
         }
     });
 
+    // Login
     app.post('/api/login', async (req, res) => {
         const { email, password } = req.body;
         try {
@@ -109,6 +154,14 @@ async function startServer() {
         }
     });
 
+    // Logout
+    app.post('/api/logout', (req, res) => {
+        
+        // Send a response indicating successful logout
+        res.status(200).send("Logged out successfully");
+    });
+
+    // Get the playlists of all the users that the logged in user is following
     app.get('/api/user/:userId/following/playlists', async (req, res) => {
         try {
             const userId = req.params.userId;
@@ -128,6 +181,7 @@ async function startServer() {
         }
     });
 
+    // Get the followers of the logged in user
     app.get('/api/users/:id/followers', async (req, res) => {
         const { id } = req.params;
         try {
@@ -143,6 +197,7 @@ async function startServer() {
         }
     });
 
+    // Get the following of the logged in user
     app.get('/api/users/:id/following', async (req, res) => {
         const { id } = req.params;
         try {
@@ -155,6 +210,58 @@ async function startServer() {
             res.json(following);
         } catch (err) {
             res.status(500).send(err);
+        }
+    });
+
+    // Updates the username / description of the logged in user
+    app.put('/api/users/:id', async (req, res) => {
+        const { id } = req.params;
+        const { username, description } = req.body;
+        try {
+            const result = await UserCollection.updateOne(
+                { _id: id },
+                { $set: { username, description } }
+            );
+            if (result.matchedCount === 0) {
+                return res.status(404).json({message: "User not found" });
+            }
+            res.status(200).json({ message: "Profile updated successfully" });
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    });
+
+    // Updates the playlist name / description of the logged in user
+    app.put('/api/playlist/:id', async (req, res) => {
+        const { id } = req.params;
+        const { name, description } = req.body;
+        const loggedInUserId = req.headers['user-id']; // Assuming user ID is sent in cookies or headers
+        console.log(loggedInUserId);
+    
+        try {
+            // Find the playlist and check if the logged-in user is the owner
+            const playlist = await PlaylistCollection.findOne({ playlistID: id });
+            if (!playlist) {
+                return res.status(404).json({ message: "Playlist not found" });
+            }
+    
+            if (!playlist.userID.includes(loggedInUserId)) {
+                return res.status(403).json({ message: "You are not the owner of this playlist" });
+            }
+    
+            // Update the playlist
+            const result = await PlaylistCollection.updateOne(
+                { playlistID: id },
+                { $set: { name, description } }
+            );
+    
+            if (result.matchedCount === 0) {
+                return res.status(404).json({ message: "Playlist not found" });
+            }
+    
+            res.status(200).json({ message: "Playlist updated successfully" });
+        } catch (err) {
+            res.status(500).json({ error: err.message });
         }
     });
 

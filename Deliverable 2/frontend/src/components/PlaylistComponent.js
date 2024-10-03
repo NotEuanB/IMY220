@@ -6,17 +6,16 @@ class PlaylistComponent extends React.Component {
         const { name, description, imageUrl, songs } = this.props;
         return (
             <div>
-                <img src={ imageUrl }></img>
-                <h2>{ name }</h2>
-                <p>{ description }</p>
+                <img src={imageUrl} alt="Playlist cover" width='200px'/>
+                <h2>{name}</h2>
+                <p>{description}</p>
                 
                 {songs.map((song, index) => (
-                  <div key={index}>
-                    <Song title={song.title} link={song.link} imageUrl={song.imageUrl} />
-                    <hr />
-                  </div>
+                    <div key={index}>
+                        <Song title={song.title} link={song.link} imageUrl={song.imageUrl} />
+                        <hr />
+                    </div>
                 ))}
-
             </div>
         );
     }

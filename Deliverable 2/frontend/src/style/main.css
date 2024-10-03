@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Lightning';
+    src: url(./fonts/Lightningvolt.ttf);
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #0A0759;
+    color: #F2A20C;
+    font-family: Arial, sans-serif;
+}

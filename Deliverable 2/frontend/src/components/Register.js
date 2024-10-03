@@ -1,5 +1,46 @@
 import React from "react";
 
+const styles = {
+    form: {
+        backgroundColor: '#fff',
+        padding: '20px',
+        margin: '20px auto',
+        borderRadius: '8px',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        maxWidth: '400px',
+        textAlign: 'left'
+    },
+    formLabel: {
+        display: 'block',
+        marginBottom: '8px',
+        fontWeight: 'bold',
+        color: '#0A0759'
+    },
+    formInput: {
+        width: 'calc(100% - 20px)',
+        padding: '8px',
+        marginBottom: '10px',
+        border: '1px solid #ccc',
+        borderRadius: '4px'
+    },
+    formButton: {
+        width: '100%',
+        padding: '10px',
+        backgroundColor: '#007bff',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer'
+    },
+    formButtonHover: {
+        backgroundColor: '#0056b3'
+    },
+    formSpan: {
+        color: 'red',
+        fontSize: '12px'
+    }
+};
+
 class Register extends React.Component {
     constructor(props) {
         super(props);
@@ -72,25 +113,19 @@ class Register extends React.Component {
 
     render() {
         return (
-            <form onSubmit={this.handleSubmit}>
-                <label htmlFor="usernameRegister">Username:</label>
-                <input type="text" placeholder="Username here..." id="usernameRegister" name="username" value={this.state.username} onChange={this.handleChange} />
-                {this.state.problems.username && <span>{this.state.problems.username}</span>}
-
+            <form onSubmit={this.handleSubmit} style={styles.form}>
+                <label htmlFor="usernameRegister" style={styles.formLabel}>Username:</label>
+                <input type="text" placeholder="Username here..." id="usernameRegister" name="username" value={this.state.username} onChange={this.handleChange} style={styles.formInput} />
+                {this.state.problems.username && <span style={styles.formSpan}>{this.state.problems.username}</span>}
                 <br/>
-
-                <label htmlFor="passwordRegister">Password:</label>
-                <input type="password" placeholder="Password here..." id="passwordRegister" name="password" value={this.state.password} onChange={this.handleChange} />
-                {this.state.problems.password && <span>{this.state.problems.password}</span>}
-
+                <label htmlFor="passwordRegister" style={styles.formLabel}>Password:</label>
+                <input type="password" placeholder="Password here..." id="passwordRegister" name="password" value={this.state.password} onChange={this.handleChange} style={styles.formInput}/>
+                {this.state.problems.password && <span style={styles.formSpan}>{this.state.problems.password}</span>}
                 <br/>
-
-                <label htmlFor="emailRegister">Email:</label>
-                <input type="email" placeholder="Email here..." id="emailRegister" name="email" value={this.state.email} onChange={this.handleChange} />
-                {this.state.problems.email && <span>{this.state.problems.email}</span>}
-
+                <label htmlFor="emailRegister" style={styles.formLabel}>Email:</label>
+                <input type="email" placeholder="Email here..." id="emailRegister" name="email" value={this.state.email} onChange={this.handleChange} style={styles.formInput}/>
+                {this.state.problems.email && <span style={styles.formSpan}>{this.state.problems.email}</span>}
                 <br/>
-
                 <button type="submit">Register</button>
             </form>
         );

@@ -5,19 +5,25 @@ import PlaylistComponent from '../components/PlaylistComponent.js';
 import EditPlaylist from '../components/EditPlaylist.js';
 import ListComments from '../components/ListComments.js';
 import EditComment from '../components/EditComment.js';
+import { getCookie } from '../utils/cookie';
 
 class Playlist extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             playlist: null,
+            songs: [],
             error: null,
+            loggedInUserId: null,
         };
     }
     
     async componentDidMount() {
         const { id } = this.props.params;
+        const loggedInUserId = getCookie('userId');
+        this.setState({ loggedInUserId });
         await this.fetchPlaylist(id);
+        await this.fetchSongs(id);
     }
 
     fetchPlaylist = async (id) => {
@@ -34,9 +40,22 @@ class Playlist extends React.Component {
         }
     };
 
-    render() {
-        const { playlist, error } = this.state;
+    fetchSongs = async (id) => {
+        try {
+            const response = await fetch(`/api/playlist/${id}/songs`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            this.setState({ songs: data });
+        } catch (error) {
+            console.log("Error fetching songs data:", error);
+        }
+    };
 
+    render() {
+        const { playlist, songs, error, loggedInUserId } = this.state;
+        
         if (error) {
             return <div>{error}</div>;
         }
@@ -45,14 +64,20 @@ class Playlist extends React.Component {
             return <div>Loading...</div>;
         }
 
+        const isOwner = playlist.userID.includes(loggedInUserId);
+
         return (
             <div>
-                <h1>Playlist</h1>
                 <Header />
-                <PlaylistComponent name={ playlist.name } description={ playlist.description } imageUrl={ playlist.imageUrl } songs={ playlist.songs } />
-                <EditPlaylist name={ playlist.name } description={ playlist.description }/>
-                <ListComments comments={ playlist.comments }/>
-                <EditComment />
+                <PlaylistComponent 
+                    name={playlist.name} 
+                    description={playlist.description} 
+                    imageUrl={playlist.imageUrl} 
+                    songs={songs} 
+                />
+                {isOwner && <EditPlaylist playlistID={playlist.playlistID} name={playlist.name} description={playlist.description} />}
+                <ListComments comments={playlist.comments} />
+                {isOwner && <EditComment />}
             </div>
         );
     }

@@ -20,19 +20,19 @@ function startServer() {
   return _startServer.apply(this, arguments);
 }
 function _startServer() {
-  _startServer = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
+  _startServer = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee13() {
     var db, SongCollection, PlaylistCollection, UserCollection, PORT;
-    return _regeneratorRuntime().wrap(function _callee9$(_context9) {
-      while (1) switch (_context9.prev = _context9.next) {
+    return _regeneratorRuntime().wrap(function _callee13$(_context13) {
+      while (1) switch (_context13.prev = _context13.next) {
         case 0:
-          _context9.next = 2;
+          _context13.next = 2;
           return client.connect();
         case 2:
           console.info("Connected to MongoDB");
           db = client.db('Project');
           SongCollection = db.collection('Songs');
           PlaylistCollection = db.collection('Playlists');
-          UserCollection = db.collection('Users');
+          UserCollection = db.collection('Users'); // Get all of the songs in the SONG document
           app.get('/api/songs', /*#__PURE__*/function () {
             var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(req, res) {
               var songs;
@@ -63,9 +63,11 @@ function _startServer() {
               return _ref.apply(this, arguments);
             };
           }());
-          app.get('/api/playlists/:id', /*#__PURE__*/function () {
+
+          // Get a specific user with the given ID
+          app.get('/api/users/:id', /*#__PURE__*/function () {
             var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(req, res) {
-              var id, user, playlistIDs, playlists;
+              var id, user;
               return _regeneratorRuntime().wrap(function _callee2$(_context2) {
                 while (1) switch (_context2.prev = _context2.next) {
                   case 0:
@@ -81,38 +83,34 @@ function _startServer() {
                       _context2.next = 7;
                       break;
                     }
-                    return _context2.abrupt("return", res.status(404).send("User not found"));
+                    return _context2.abrupt("return", res.status(404).json({
+                      error: 'User not found'
+                    }));
                   case 7:
-                    // Get the user's playlist IDs
-                    playlistIDs = user.playlistIDs || []; // Find the playlists by their IDs
-                    _context2.next = 10;
-                    return PlaylistCollection.find({
-                      playlistID: {
-                        $in: playlistIDs
-                      }
-                    }).toArray();
-                  case 10:
-                    playlists = _context2.sent;
-                    res.json(playlists);
-                    _context2.next = 17;
+                    res.status(200).json(user);
+                    _context2.next = 13;
                     break;
-                  case 14:
-                    _context2.prev = 14;
+                  case 10:
+                    _context2.prev = 10;
                     _context2.t0 = _context2["catch"](1);
-                    res.status(500).send(_context2.t0);
-                  case 17:
+                    res.status(500).json({
+                      error: _context2.t0.message
+                    });
+                  case 13:
                   case "end":
                     return _context2.stop();
                 }
-              }, _callee2, null, [[1, 14]]);
+              }, _callee2, null, [[1, 10]]);
             }));
             return function (_x3, _x4) {
               return _ref2.apply(this, arguments);
             };
           }());
-          app.get('/api/users/:id', /*#__PURE__*/function () {
+
+          // This gets the playlists of a specific user
+          app.get('/api/playlists/:id', /*#__PURE__*/function () {
             var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(req, res) {
-              var id, user;
+              var id, user, playlistIDs, playlists;
               return _regeneratorRuntime().wrap(function _callee3$(_context3) {
                 while (1) switch (_context3.prev = _context3.next) {
                   case 0:
@@ -125,38 +123,140 @@ function _startServer() {
                   case 4:
                     user = _context3.sent;
                     if (user) {
-                      res.json(user);
-                    } else {
-                      res.status(404).send("User not found");
+                      _context3.next = 7;
+                      break;
                     }
-                    _context3.next = 11;
+                    return _context3.abrupt("return", res.status(404).send("User not found"));
+                  case 7:
+                    // Get the user's playlist IDs
+                    playlistIDs = user.playlistIDs || []; // Find the playlists by their IDs
+                    _context3.next = 10;
+                    return PlaylistCollection.find({
+                      playlistID: {
+                        $in: playlistIDs
+                      }
+                    }).toArray();
+                  case 10:
+                    playlists = _context3.sent;
+                    res.json(playlists);
+                    _context3.next = 17;
                     break;
-                  case 8:
-                    _context3.prev = 8;
+                  case 14:
+                    _context3.prev = 14;
                     _context3.t0 = _context3["catch"](1);
                     res.status(500).send(_context3.t0);
-                  case 11:
+                  case 17:
                   case "end":
                     return _context3.stop();
                 }
-              }, _callee3, null, [[1, 8]]);
+              }, _callee3, null, [[1, 14]]);
             }));
             return function (_x5, _x6) {
               return _ref3.apply(this, arguments);
             };
           }());
-          app.post('/api/register', /*#__PURE__*/function () {
+
+          // This gets a spevific playlist on the playlist ID
+          app.get('/api/playlist/:id', /*#__PURE__*/function () {
             var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(req, res) {
-              var _req$body, username, password, email, count, newId, newUser;
+              var id, playlist;
               return _regeneratorRuntime().wrap(function _callee4$(_context4) {
                 while (1) switch (_context4.prev = _context4.next) {
                   case 0:
-                    _req$body = req.body, username = _req$body.username, password = _req$body.password, email = _req$body.email;
+                    id = req.params.id;
                     _context4.prev = 1;
                     _context4.next = 4;
+                    return PlaylistCollection.findOne({
+                      playlistID: id
+                    });
+                  case 4:
+                    playlist = _context4.sent;
+                    if (playlist) {
+                      _context4.next = 7;
+                      break;
+                    }
+                    return _context4.abrupt("return", res.status(404).send("playlist not found"));
+                  case 7:
+                    res.json(playlist);
+                    _context4.next = 13;
+                    break;
+                  case 10:
+                    _context4.prev = 10;
+                    _context4.t0 = _context4["catch"](1);
+                    res.status(500).send(_context4.t0);
+                  case 13:
+                  case "end":
+                    return _context4.stop();
+                }
+              }, _callee4, null, [[1, 10]]);
+            }));
+            return function (_x7, _x8) {
+              return _ref4.apply(this, arguments);
+            };
+          }());
+
+          // This finds the songs from the specific playlist with the user ID
+          app.get('/api/playlist/:id/songs', /*#__PURE__*/function () {
+            var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5(req, res) {
+              var id, playlist, songIDs, songs;
+              return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+                while (1) switch (_context5.prev = _context5.next) {
+                  case 0:
+                    id = req.params.id;
+                    _context5.prev = 1;
+                    _context5.next = 4;
+                    return PlaylistCollection.findOne({
+                      playlistID: id
+                    });
+                  case 4:
+                    playlist = _context5.sent;
+                    if (playlist) {
+                      _context5.next = 7;
+                      break;
+                    }
+                    return _context5.abrupt("return", res.status(404).send("Playlist not found"));
+                  case 7:
+                    // Assuming the playlist document contains an array of song IDs
+                    songIDs = playlist.songIDs || []; // Fetch the songs by their IDs
+                    _context5.next = 10;
+                    return SongCollection.find({
+                      songID: {
+                        $in: songIDs
+                      }
+                    }).toArray();
+                  case 10:
+                    songs = _context5.sent;
+                    res.json(songs);
+                    _context5.next = 17;
+                    break;
+                  case 14:
+                    _context5.prev = 14;
+                    _context5.t0 = _context5["catch"](1);
+                    res.status(500).send(_context5.t0);
+                  case 17:
+                  case "end":
+                    return _context5.stop();
+                }
+              }, _callee5, null, [[1, 14]]);
+            }));
+            return function (_x9, _x10) {
+              return _ref5.apply(this, arguments);
+            };
+          }());
+
+          // Register
+          app.post('/api/register', /*#__PURE__*/function () {
+            var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6(req, res) {
+              var _req$body, username, password, email, count, newId, newUser;
+              return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+                while (1) switch (_context6.prev = _context6.next) {
+                  case 0:
+                    _req$body = req.body, username = _req$body.username, password = _req$body.password, email = _req$body.email;
+                    _context6.prev = 1;
+                    _context6.next = 4;
                     return UserCollection.countDocuments();
                   case 4:
-                    count = _context4.sent;
+                    count = _context6.sent;
                     newId = "user0".concat(count + 1);
                     newUser = {
                       _id: newId.toString(),
@@ -169,130 +269,39 @@ function _startServer() {
                       followerIDs: [],
                       followingIDs: []
                     };
-                    _context4.next = 9;
+                    _context6.next = 9;
                     return UserCollection.insertOne(newUser);
                   case 9:
                     res.status(201).send("User registered successfully");
-                    _context4.next = 15;
+                    _context6.next = 15;
                     break;
                   case 12:
-                    _context4.prev = 12;
-                    _context4.t0 = _context4["catch"](1);
-                    res.status(500).send(_context4.t0);
-                  case 15:
-                  case "end":
-                    return _context4.stop();
-                }
-              }, _callee4, null, [[1, 12]]);
-            }));
-            return function (_x7, _x8) {
-              return _ref4.apply(this, arguments);
-            };
-          }());
-          app.post('/api/login', /*#__PURE__*/function () {
-            var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5(req, res) {
-              var _req$body2, email, password, user, isPasswordValid;
-              return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-                while (1) switch (_context5.prev = _context5.next) {
-                  case 0:
-                    _req$body2 = req.body, email = _req$body2.email, password = _req$body2.password;
-                    _context5.prev = 1;
-                    _context5.next = 4;
-                    return UserCollection.findOne({
-                      email: email
-                    });
-                  case 4:
-                    user = _context5.sent;
-                    if (user) {
-                      _context5.next = 7;
-                      break;
-                    }
-                    return _context5.abrupt("return", res.status(401).send("Invalid email or password"));
-                  case 7:
-                    isPasswordValid = password === user.password;
-                    if (isPasswordValid) {
-                      _context5.next = 10;
-                      break;
-                    }
-                    return _context5.abrupt("return", res.status(401).send("Invalid email or password"));
-                  case 10:
-                    res.status(200).json({
-                      userId: user._id.toString()
-                    });
-                    _context5.next = 16;
-                    break;
-                  case 13:
-                    _context5.prev = 13;
-                    _context5.t0 = _context5["catch"](1);
-                    res.status(500).send(_context5.t0);
-                  case 16:
-                  case "end":
-                    return _context5.stop();
-                }
-              }, _callee5, null, [[1, 13]]);
-            }));
-            return function (_x9, _x10) {
-              return _ref5.apply(this, arguments);
-            };
-          }());
-          app.get('/api/user/:userId/following/playlists', /*#__PURE__*/function () {
-            var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6(req, res) {
-              var userId, user, friends, playlists;
-              return _regeneratorRuntime().wrap(function _callee6$(_context6) {
-                while (1) switch (_context6.prev = _context6.next) {
-                  case 0:
-                    _context6.prev = 0;
-                    userId = req.params.userId;
-                    _context6.next = 4;
-                    return UserCollection.findOne({
-                      _id: userId
-                    });
-                  case 4:
-                    user = _context6.sent;
-                    if (user) {
-                      _context6.next = 7;
-                      break;
-                    }
-                    return _context6.abrupt("return", res.status(404).send('User not found'));
-                  case 7:
-                    friends = user.followingIDs || [];
-                    _context6.next = 10;
-                    return PlaylistCollection.find({
-                      userID: {
-                        $in: friends
-                      }
-                    }).toArray();
-                  case 10:
-                    playlists = _context6.sent;
-                    res.json(playlists);
-                    _context6.next = 18;
-                    break;
-                  case 14:
-                    _context6.prev = 14;
-                    _context6.t0 = _context6["catch"](0);
-                    console.error('Error fetching playlists:', _context6.t0);
+                    _context6.prev = 12;
+                    _context6.t0 = _context6["catch"](1);
                     res.status(500).send(_context6.t0);
-                  case 18:
+                  case 15:
                   case "end":
                     return _context6.stop();
                 }
-              }, _callee6, null, [[0, 14]]);
+              }, _callee6, null, [[1, 12]]);
             }));
             return function (_x11, _x12) {
               return _ref6.apply(this, arguments);
             };
           }());
-          app.get('/api/users/:id/followers', /*#__PURE__*/function () {
+
+          // Login
+          app.post('/api/login', /*#__PURE__*/function () {
             var _ref7 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7(req, res) {
-              var id, user, followers;
+              var _req$body2, email, password, user, isPasswordValid;
               return _regeneratorRuntime().wrap(function _callee7$(_context7) {
                 while (1) switch (_context7.prev = _context7.next) {
                   case 0:
-                    id = req.params.id;
+                    _req$body2 = req.body, email = _req$body2.email, password = _req$body2.password;
                     _context7.prev = 1;
                     _context7.next = 4;
                     return UserCollection.findOne({
-                      _id: id
+                      email: email
                     });
                   case 4:
                     user = _context7.sent;
@@ -300,17 +309,18 @@ function _startServer() {
                       _context7.next = 7;
                       break;
                     }
-                    return _context7.abrupt("return", res.status(404).send("User not found"));
+                    return _context7.abrupt("return", res.status(401).send("Invalid email or password"));
                   case 7:
-                    _context7.next = 9;
-                    return UserCollection.find({
-                      _id: {
-                        $in: user.followerIDs
-                      }
-                    }).toArray();
-                  case 9:
-                    followers = _context7.sent;
-                    res.json(followers);
+                    isPasswordValid = password === user.password;
+                    if (isPasswordValid) {
+                      _context7.next = 10;
+                      break;
+                    }
+                    return _context7.abrupt("return", res.status(401).send("Invalid email or password"));
+                  case 10:
+                    res.status(200).json({
+                      userId: user._id.toString()
+                    });
                     _context7.next = 16;
                     break;
                   case 13:
@@ -327,17 +337,25 @@ function _startServer() {
               return _ref7.apply(this, arguments);
             };
           }());
-          app.get('/api/users/:id/following', /*#__PURE__*/function () {
+
+          // Logout
+          app.post('/api/logout', function (req, res) {
+            // Send a response indicating successful logout
+            res.status(200).send("Logged out successfully");
+          });
+
+          // Get the playlists of all the users that the logged in user is following
+          app.get('/api/user/:userId/following/playlists', /*#__PURE__*/function () {
             var _ref8 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(req, res) {
-              var id, user, following;
+              var userId, user, friends, playlists;
               return _regeneratorRuntime().wrap(function _callee8$(_context8) {
                 while (1) switch (_context8.prev = _context8.next) {
                   case 0:
-                    id = req.params.id;
-                    _context8.prev = 1;
+                    _context8.prev = 0;
+                    userId = req.params.userId;
                     _context8.next = 4;
                     return UserCollection.findOne({
-                      _id: id
+                      _id: userId
                     });
                   case 4:
                     user = _context8.sent;
@@ -345,31 +363,253 @@ function _startServer() {
                       _context8.next = 7;
                       break;
                     }
-                    return _context8.abrupt("return", res.status(404).send("User not found"));
+                    return _context8.abrupt("return", res.status(404).send('User not found'));
                   case 7:
-                    _context8.next = 9;
+                    friends = user.followingIDs || [];
+                    _context8.next = 10;
+                    return PlaylistCollection.find({
+                      userID: {
+                        $in: friends
+                      }
+                    }).toArray();
+                  case 10:
+                    playlists = _context8.sent;
+                    res.json(playlists);
+                    _context8.next = 18;
+                    break;
+                  case 14:
+                    _context8.prev = 14;
+                    _context8.t0 = _context8["catch"](0);
+                    console.error('Error fetching playlists:', _context8.t0);
+                    res.status(500).send(_context8.t0);
+                  case 18:
+                  case "end":
+                    return _context8.stop();
+                }
+              }, _callee8, null, [[0, 14]]);
+            }));
+            return function (_x15, _x16) {
+              return _ref8.apply(this, arguments);
+            };
+          }());
+
+          // Get the followers of the logged in user
+          app.get('/api/users/:id/followers', /*#__PURE__*/function () {
+            var _ref9 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9(req, res) {
+              var id, user, followers;
+              return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+                while (1) switch (_context9.prev = _context9.next) {
+                  case 0:
+                    id = req.params.id;
+                    _context9.prev = 1;
+                    _context9.next = 4;
+                    return UserCollection.findOne({
+                      _id: id
+                    });
+                  case 4:
+                    user = _context9.sent;
+                    if (user) {
+                      _context9.next = 7;
+                      break;
+                    }
+                    return _context9.abrupt("return", res.status(404).send("User not found"));
+                  case 7:
+                    _context9.next = 9;
+                    return UserCollection.find({
+                      _id: {
+                        $in: user.followerIDs
+                      }
+                    }).toArray();
+                  case 9:
+                    followers = _context9.sent;
+                    res.json(followers);
+                    _context9.next = 16;
+                    break;
+                  case 13:
+                    _context9.prev = 13;
+                    _context9.t0 = _context9["catch"](1);
+                    res.status(500).send(_context9.t0);
+                  case 16:
+                  case "end":
+                    return _context9.stop();
+                }
+              }, _callee9, null, [[1, 13]]);
+            }));
+            return function (_x17, _x18) {
+              return _ref9.apply(this, arguments);
+            };
+          }());
+
+          // Get the following of the logged in user
+          app.get('/api/users/:id/following', /*#__PURE__*/function () {
+            var _ref10 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee10(req, res) {
+              var id, user, following;
+              return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+                while (1) switch (_context10.prev = _context10.next) {
+                  case 0:
+                    id = req.params.id;
+                    _context10.prev = 1;
+                    _context10.next = 4;
+                    return UserCollection.findOne({
+                      _id: id
+                    });
+                  case 4:
+                    user = _context10.sent;
+                    if (user) {
+                      _context10.next = 7;
+                      break;
+                    }
+                    return _context10.abrupt("return", res.status(404).send("User not found"));
+                  case 7:
+                    _context10.next = 9;
                     return UserCollection.find({
                       _id: {
                         $in: user.followingIDs
                       }
                     }).toArray();
                   case 9:
-                    following = _context8.sent;
+                    following = _context10.sent;
                     res.json(following);
-                    _context8.next = 16;
+                    _context10.next = 16;
                     break;
                   case 13:
-                    _context8.prev = 13;
-                    _context8.t0 = _context8["catch"](1);
-                    res.status(500).send(_context8.t0);
+                    _context10.prev = 13;
+                    _context10.t0 = _context10["catch"](1);
+                    res.status(500).send(_context10.t0);
                   case 16:
                   case "end":
-                    return _context8.stop();
+                    return _context10.stop();
                 }
-              }, _callee8, null, [[1, 13]]);
+              }, _callee10, null, [[1, 13]]);
             }));
-            return function (_x15, _x16) {
-              return _ref8.apply(this, arguments);
+            return function (_x19, _x20) {
+              return _ref10.apply(this, arguments);
+            };
+          }());
+
+          // Updates the username / description of the logged in user
+          app.put('/api/users/:id', /*#__PURE__*/function () {
+            var _ref11 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee11(req, res) {
+              var id, _req$body3, username, description, result;
+              return _regeneratorRuntime().wrap(function _callee11$(_context11) {
+                while (1) switch (_context11.prev = _context11.next) {
+                  case 0:
+                    id = req.params.id;
+                    _req$body3 = req.body, username = _req$body3.username, description = _req$body3.description;
+                    _context11.prev = 2;
+                    _context11.next = 5;
+                    return UserCollection.updateOne({
+                      _id: id
+                    }, {
+                      $set: {
+                        username: username,
+                        description: description
+                      }
+                    });
+                  case 5:
+                    result = _context11.sent;
+                    if (!(result.matchedCount === 0)) {
+                      _context11.next = 8;
+                      break;
+                    }
+                    return _context11.abrupt("return", res.status(404).json({
+                      message: "User not found"
+                    }));
+                  case 8:
+                    res.status(200).json({
+                      message: "Profile updated successfully"
+                    });
+                    _context11.next = 14;
+                    break;
+                  case 11:
+                    _context11.prev = 11;
+                    _context11.t0 = _context11["catch"](2);
+                    res.status(500).json({
+                      error: _context11.t0.message
+                    });
+                  case 14:
+                  case "end":
+                    return _context11.stop();
+                }
+              }, _callee11, null, [[2, 11]]);
+            }));
+            return function (_x21, _x22) {
+              return _ref11.apply(this, arguments);
+            };
+          }());
+
+          // Updates the playlist name / description of the logged in user
+          app.put('/api/playlist/:id', /*#__PURE__*/function () {
+            var _ref12 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12(req, res) {
+              var id, _req$body4, name, description, loggedInUserId, playlist, result;
+              return _regeneratorRuntime().wrap(function _callee12$(_context12) {
+                while (1) switch (_context12.prev = _context12.next) {
+                  case 0:
+                    id = req.params.id;
+                    _req$body4 = req.body, name = _req$body4.name, description = _req$body4.description;
+                    loggedInUserId = req.headers['user-id']; // Assuming user ID is sent in cookies or headers
+                    console.log(loggedInUserId);
+                    _context12.prev = 4;
+                    _context12.next = 7;
+                    return PlaylistCollection.findOne({
+                      playlistID: id
+                    });
+                  case 7:
+                    playlist = _context12.sent;
+                    if (playlist) {
+                      _context12.next = 10;
+                      break;
+                    }
+                    return _context12.abrupt("return", res.status(404).json({
+                      message: "Playlist not found"
+                    }));
+                  case 10:
+                    if (playlist.userID.includes(loggedInUserId)) {
+                      _context12.next = 12;
+                      break;
+                    }
+                    return _context12.abrupt("return", res.status(403).json({
+                      message: "You are not the owner of this playlist"
+                    }));
+                  case 12:
+                    _context12.next = 14;
+                    return PlaylistCollection.updateOne({
+                      playlistID: id
+                    }, {
+                      $set: {
+                        name: name,
+                        description: description
+                      }
+                    });
+                  case 14:
+                    result = _context12.sent;
+                    if (!(result.matchedCount === 0)) {
+                      _context12.next = 17;
+                      break;
+                    }
+                    return _context12.abrupt("return", res.status(404).json({
+                      message: "Playlist not found"
+                    }));
+                  case 17:
+                    res.status(200).json({
+                      message: "Playlist updated successfully"
+                    });
+                    _context12.next = 23;
+                    break;
+                  case 20:
+                    _context12.prev = 20;
+                    _context12.t0 = _context12["catch"](4);
+                    res.status(500).json({
+                      error: _context12.t0.message
+                    });
+                  case 23:
+                  case "end":
+                    return _context12.stop();
+                }
+              }, _callee12, null, [[4, 20]]);
+            }));
+            return function (_x23, _x24) {
+              return _ref12.apply(this, arguments);
             };
           }());
 
@@ -385,11 +625,11 @@ function _startServer() {
           app.listen(PORT, function () {
             console.log("Server is running on port ".concat(PORT));
           });
-        case 18:
+        case 23:
         case "end":
-          return _context9.stop();
+          return _context13.stop();
       }
-    }, _callee9);
+    }, _callee13);
   }));
   return _startServer.apply(this, arguments);
 }
