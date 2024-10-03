@@ -67,7 +67,7 @@ async function startServer() {
         }
     });
 
-    // This gets a spevific playlist on the playlist ID
+    // This gets a specific playlist on the playlist ID
     app.get('/api/playlist/:id', async (req, res) => {
         const { id } = req.params;
         try {
@@ -156,9 +156,27 @@ async function startServer() {
 
     // Logout
     app.post('/api/logout', (req, res) => {
-        
-        // Send a response indicating successful logout
         res.status(200).send("Logged out successfully");
+    });
+
+    // Delete logged in user's account
+    app.delete('/api/user/:id', async (req, res) => {
+        const { id } = req.params;
+        const loggedInUserId = req.headers['user-id']; // Assuming user ID is sent in headers
+    
+        if (id !== loggedInUserId) {
+            return res.status(403).json({ message: "You can only delete your own account" });
+        }
+    
+        try {
+            const result = await UserCollection.deleteOne({ _id: id });
+            if (result.deletedCount === 0) {
+                return res.status(404).json({ message: "User not found" });
+            }
+            res.status(200).json({ message: "Account deleted successfully" });
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
     });
 
     // Get the playlists of all the users that the logged in user is following
@@ -172,8 +190,8 @@ async function startServer() {
             }
 
             const friends = user.followingIDs || [];
-            
-            const playlists = await PlaylistCollection.find({ userID: { $in: friends }}).toArray();
+
+            const playlists = await PlaylistCollection.find({ userIDs: { $in: friends }}).toArray();
             res.json(playlists);
         } catch (err) {
             console.error('Error fetching playlists:', err);
@@ -236,7 +254,6 @@ async function startServer() {
         const { id } = req.params;
         const { name, description } = req.body;
         const loggedInUserId = req.headers['user-id']; // Assuming user ID is sent in cookies or headers
-        console.log(loggedInUserId);
     
         try {
             // Find the playlist and check if the logged-in user is the owner
@@ -262,6 +279,178 @@ async function startServer() {
             res.status(200).json({ message: "Playlist updated successfully" });
         } catch (err) {
             res.status(500).json({ error: err.message });
+        }
+    });
+
+    // Create playlist for logged in user
+    app.put('/api/:id/createplaylist', async (req, res) => {
+        const { id } = req.params;
+        const { name, description } = req.body;
+
+        try {
+            const user = await UserCollection.findOne({ _id: id });
+            if (!user) {
+               return res.status(404).json ({ message: "User not found" });
+            }
+
+            const count = await PlaylistCollection.countDocuments();
+            const newId = `PL0${count + 1}`;
+
+            const newPlaylist = {
+                playlistID: newId.toString(),
+                name,
+                description, 
+                imageUrl: '/assets/images/placeholder.png', 
+                comments: [],
+                userIDs: [
+                    id
+                ],
+                songIDs: [] };
+
+            await PlaylistCollection.insertOne(newPlaylist);
+
+            await UserCollection.updateOne(
+                { _id: id },
+                { $push: { playlistIDs: newId.toString() } }
+            );
+
+            res.status(201).send("Playlist created successfully");
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    });
+
+    // Remove playlist from logged-in user's library
+    app.delete('/api/playlists/:playlistId/remove', async (req, res) => {
+        const { playlistId } = req.params;
+        const loggedInUserId = req.headers['user-id'];
+    
+        try {
+            const playlist = await PlaylistCollection.findOne({ playlistID: playlistId });
+            if (!playlist) {
+                return res.status(404).json({ message: "Playlist not found" });
+            }
+    
+            if (!playlist.userIDs.includes(loggedInUserId)) {
+                return res.status(403).json({ message: "You do not have this playlist in your library" });
+            }
+    
+            await UserCollection.updateOne(
+                { _id: loggedInUserId },
+                { $pull: { playlistIDs: playlistId } }
+            );
+    
+            res.status(200).json({ message: "Playlist removed from user library successfully" });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    });
+
+    // Add song to playlist
+    app.post('/api/playlists/:playlistId/add', async (req, res) => {
+        const { playlistId } = req.params;
+        const { trackId } = req.body;
+    
+        try {
+            const playlist = await PlaylistCollection.findOne({ playlistID: playlistId });
+            if (!playlist) {
+                return res.status(404).json({ message: "Playlist not found" });
+            }
+    
+            await PlaylistCollection.updateOne(
+                { playlistID: playlistId },
+                { $push: { songIDs: trackId } }
+            );
+
+            await SongCollection.updateOne(
+                { songID: trackId },
+                { $addToSet: { playlistIDs: playlistId } }
+            );
+    
+            res.status(200).json({ message: "Song added to playlist successfully" });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    });
+
+    // Add song to website
+    app.put('/api/createsong', async (req, res) => {
+        const { title, link } = req.body;
+    
+        if (!title || !link) {
+            return res.status(400).json({ message: 'Title and link are required' });
+        }
+    
+        try {
+            const songID = generateSongID(title);
+    
+            const newSong = {
+                songID,
+                title,
+                link,
+                playlistIDs: [],
+                userIDs: [],
+                dateAdded: new Date()
+            };
+    
+            await SongCollection.insertOne(newSong);
+    
+            res.status(201).json({ message: 'Song created successfully', song: newSong });
+        } catch (error) {
+            console.error('Error creating song:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    });
+    
+    // Function to generate a songID from the title
+    function generateSongID(title) {
+        return title
+            .split(' ')
+            .map(word => word[0].toLowerCase())
+            .join('');
+    }
+
+    // Delete song form document
+    app.delete('/api/songs/:songID', async (req, res) => {
+        const { songID } = req.params;
+    
+        try {
+            const result = await SongCollection.deleteOne({ songID });
+    
+            if (result.deletedCount === 0) {
+                return res.status(404).json({ message: 'Song not found' });
+            }
+    
+            res.status(200).json({ message: 'Song deleted successfully' });
+        } catch (error) {
+            console.error('Error deleting song:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    });
+
+    // Search all
+    app.get('/api/search', async (req, res) => {
+        const { term, type } = req.query;
+    
+        try {
+            let results;
+            switch (type) {
+                case 'playlists':
+                    results = await PlaylistCollection.find({ name: { $regex: term, $options: 'i' } }).toArray();
+                    break;
+                case 'songs':
+                    results = await SongCollection.find({ title: { $regex: term, $options: 'i' } }).toArray();
+                    break;
+                case 'users':
+                    results = await UserCollection.find({ username: { $regex: term, $options: 'i' } }).toArray();
+                    break;
+                default:
+                    return res.status(400).json({ message: 'Invalid search type' });
+            }
+            res.status(200).json(results);
+        } catch (error) {
+            console.error('Error searching:', error);
+            res.status(500).json({ message: 'Internal server error' });
         }
     });
 

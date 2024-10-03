@@ -6,16 +6,13 @@ import { setCookie, getCookie, deleteCookie } from '../utils/cookie';
 class Header extends React.Component {
     handleLogout = async () => {
         try {
-            // Send request to logout endpoint
             await fetch('/api/logout', {
                 method: 'POST',
-                credentials: 'include' // Include cookies in the request
+                credentials: 'include' 
             });
 
-            // Delete the userId cookie
             deleteCookie('userId');
 
-            // Redirect to splash page
             window.location.href = '/'; 
         } catch (error) {
             console.error('Error logging out:', error);

@@ -64,7 +64,7 @@ class Playlist extends React.Component {
             return <div>Loading...</div>;
         }
 
-        const isOwner = playlist.userID.includes(loggedInUserId);
+        const isOwner = playlist.userIDs.includes(loggedInUserId);
 
         return (
             <div>

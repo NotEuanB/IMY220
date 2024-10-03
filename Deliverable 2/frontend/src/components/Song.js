@@ -1,8 +1,88 @@
 import React from "react";
+import { getCookie } from '../utils/cookie';
 
 class Song extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            playlists: [],
+            selectedPlaylistId: '',
+            selectedPlaylistName: ''
+        };
+    }
+
+    async componentDidMount() {
+        const userId = getCookie('userId');
+        try {
+            const response = await fetch(`/api/playlists/${userId}`);
+            if (response.ok) {
+                const playlists = await response.json();
+                this.setState({ playlists });
+            } else {
+                console.error('Failed to fetch playlists');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    handleChange = (event) => {
+        const selectedPlaylistId = event.target.value;
+        const selectedPlaylistName = event.target.options[event.target.selectedIndex].text;
+        this.setState({ selectedPlaylistId, selectedPlaylistName });
+    };
+
+    handleAddToPlaylist = async () => {
+        const { selectedPlaylistId } = this.state;
+        const { title } = this.props;
+        const trackId = this.generateTrackId(title);
+
+        try {
+            const response = await fetch(`/api/playlists/${selectedPlaylistId}/add`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ trackId })
+            });
+            if (response.ok) {
+                console.log('Song added to playlist successfully');
+            } else {
+                console.error('Failed to add song to playlist');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    handleDeleteSong = async () => {
+        const { title } = this.props;
+        const trackId = this.generateTrackId(title);
+
+        try {
+            const response = await fetch(`/api/songs/${trackId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response.ok) {
+                console.log('Song deleted successfully');
+            } else {
+                console.error('Failed to delete song');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    generateTrackId = (title) => {
+        return title.split(' ').map(word => word[0].toLowerCase()).join('');
+    };
+
     render() {
         const { title, link } = this.props;
+        const { playlists, selectedPlaylistId, selectedPlaylistName } = this.state;
         const trackId = link.split('/track/')[1].split('?')[0]; // Extract track ID from link
         const embedUrl = `https://open.spotify.com/embed/track/${trackId}`;
 
@@ -16,9 +96,20 @@ class Song extends React.Component {
                     allowtransparency="true"
                     allow="encrypted-media"
                 ></iframe>
+                <select value={selectedPlaylistId} onChange={this.handleChange}>
+                    <option value="" disabled>Select a playlist</option>
+                    {playlists.map((playlist) => (
+                        <option key={playlist.playlistID} value={playlist.playlistID}>
+                            {playlist.name}
+                        </option>
+                    ))}
+                </select>
+                <button onClick={this.handleAddToPlaylist}>Add to playlist</button>
+                <button onClick={this.handleDeleteSong}>Delete song</button>
+                {selectedPlaylistName && <p>Selected Playlist: {selectedPlaylistName}</p>}
             </div>
         );
     }
-};
+}
 
 export default Song;

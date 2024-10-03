@@ -1,6 +1,5 @@
 import React from "react";
 import ProfilePreview from "./ProfilePreview";
-import { getCookie } from '../utils/cookie';
 
 class Following extends React.Component {
     state = {
@@ -11,10 +10,16 @@ class Following extends React.Component {
         this.fetchFollowing();
     }
 
+    componentDidUpdate(prevProps) {
+        if (prevProps.userId !== this.props.userId) {
+            this.fetchFollowing();
+        }
+    }
+
     fetchFollowing = () => {
-        const userID = getCookie('userId');
+        const { userId } = this.props;
         
-        fetch(`/api/users/${userID}/following`)
+        fetch(`/api/users/${userId}/following`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -25,7 +30,7 @@ class Following extends React.Component {
                 this.setState({ following: data });
             })
             .catch(error => {
-                console.error('Error fetching followers:', error);
+                console.error('Error fetching following:', error);
             });
     }
 
