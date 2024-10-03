@@ -87,16 +87,21 @@ class Song extends React.Component {
         const embedUrl = `https://open.spotify.com/embed/track/${trackId}`;
 
         return (
-            <div>
-                <h3>{title}</h3>
+            <div className="border border-black p-4 rounded-lg bg-white shadow-md">
+                <h3 className="text-xl font-semibold mb-2">{title}</h3>
                 <iframe
                     src={embedUrl}
-                    width="600"
+                    width="100%"
                     height="80"
                     allowtransparency="true"
                     allow="encrypted-media"
+                    className="mb-4"
                 ></iframe>
-                <select value={selectedPlaylistId} onChange={this.handleChange}>
+                <select
+                    value={selectedPlaylistId}
+                    onChange={this.handleChange}
+                    className="w-full p-2 mb-4 border border-gray-300 rounded"
+                >
                     <option value="" disabled>Select a playlist</option>
                     {playlists.map((playlist) => (
                         <option key={playlist.playlistID} value={playlist.playlistID}>
@@ -104,9 +109,21 @@ class Song extends React.Component {
                         </option>
                     ))}
                 </select>
-                <button onClick={this.handleAddToPlaylist}>Add to playlist</button>
-                <button onClick={this.handleDeleteSong}>Delete song</button>
-                {selectedPlaylistName && <p>Selected Playlist: {selectedPlaylistName}</p>}
+                <button
+                    onClick={this.handleAddToPlaylist}
+                    className="bg-blue-500 text-white py-2 px-4 rounded mr-2 hover:bg-blue-700"
+                >
+                    Add to playlist
+                </button>
+                <button
+                    onClick={this.handleDeleteSong}
+                    className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700"
+                >
+                    Delete song
+                </button>
+                {selectedPlaylistName && (
+                    <p className="mt-4 italic">Selected Playlist: {selectedPlaylistName}</p>
+                )}
             </div>
         );
     }
