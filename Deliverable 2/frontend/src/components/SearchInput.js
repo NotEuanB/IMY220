@@ -14,11 +14,9 @@ const SearchInput = ({ onSearchResults }) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log("Form submitted with term:", term, "and type:", type); // Debugging log
         try {
             const response = await fetch(`/api/search?term=${term}&type=${type}`);
             const data = await response.json();
-            console.log("Search results:", data); // Debugging log
             onSearchResults(data, type);
         } catch (error) {
             console.error("Error fetching search results:", error);
@@ -27,22 +25,29 @@ const SearchInput = ({ onSearchResults }) => {
 
     return (
         <div>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="search">Enter search term</label>
-                <input
-                    id="search"
-                    placeholder="Enter search term here..."
-                    type="text"
-                    value={term}
-                    onChange={handleInputChange}
-                />
-                <label htmlFor="type">Select search type</label>
-                <select id="type" value={type} onChange={handleTypeChange}>
-                    <option value="playlists">Playlists</option>
-                    <option value="songs">Songs</option>
-                    <option value="users">Users</option>
-                </select>
-                <button type="submit">Search</button>
+            <form onSubmit={handleSubmit} className="grid grid-cols-3 pl-4 gap-4">
+                <div className="flex flex-col">
+                    <label htmlFor="search" className="text-white mb-2">Enter search term</label>
+                    <input
+                        id="search"
+                        placeholder="Enter search term here..."
+                        type="text"
+                        value={term}
+                        onChange={handleInputChange}
+                        className="p-2 rounded border border-gray-300 text-black"
+                    />
+                </div>
+                <div className="flex flex-col">
+                    <label htmlFor="type" className="text-white mb-2">Select search type</label>
+                    <select id="type" value={type} onChange={handleTypeChange} className="p-2 rounded border border-gray-300 text-black">
+                        <option value="playlists">Playlists</option>
+                        <option value="songs">Songs</option>
+                        <option value="users">Users</option>
+                    </select>
+                </div>
+                <button type="submit" className="bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300 p-4">
+                    Search
+                </button>
             </form>
         </div>
     );

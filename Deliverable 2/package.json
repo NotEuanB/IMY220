@@ -4,7 +4,7 @@
   "description": "IMY220 Project Deliverable 2",
   "main": "frontend/src/index.js",
   "scripts": {
-    "build": "babel backend/server.js -d backend/dist",
+    "build": "webpack && babel backend/server.js -d backend/dist",
     "start": "npm run build && node backend/dist/server.js"
   },
   "author": "Euan Botha u21439631",

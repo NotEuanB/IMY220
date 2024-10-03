@@ -22,16 +22,20 @@ class Header extends React.Component {
     render() {
         const userID = getCookie('userId');
         return (
-            <nav>
-                <Link to="/home" style={{ padding: '5px' }}>
-                    Home
-                </Link>
-                <Link to={`/profile/${ userID }`} style={{ padding: '5px' }}>
-                    Profile
-                </Link>
-                <button onClick={this.handleLogout} style={{ padding: '5px' }}>
-                    Logout
-                </button>
+            <nav className="flex flex-col items-center space-y-4 p-4 text-3xl h-full">
+                <div className="flex flex-col items-center space-y-4 mt-20">
+                    <Link to="/home" className="p-2 hover:bg-gray-700 rounded">
+                        Home
+                    </Link>
+                    <Link to={`/profile/${userID}`} className="p-2 hover:bg-gray-700 rounded">
+                        Profile
+                    </Link>
+                </div>
+                <div className="mt-auto mb-4">
+                    <button onClick={this.handleLogout} className="p-2 hover:bg-gray-700 rounded">
+                        Logout
+                    </button>
+                </div>
             </nav>
         );
     }

@@ -7,14 +7,12 @@ class SongFeed extends React.Component {
 
         return(
             <div>
-                <h2>Song Feed</h2>
                 {songs.map((song, index) => (
                   <div key={index}>
                     <Song 
                       title={song.title} 
                       link={song.link} 
                     />
-                    <hr />
                   </div>
                 ))}
             </div>

@@ -1,47 +1,6 @@
 import React from "react";
 import { setCookie, getCookie, deleteCookie } from '../utils/cookie';
 
-const styles = {
-    form: {
-        backgroundColor: '#fff',
-        padding: '20px',
-        margin: '20px auto',
-        borderRadius: '8px',
-        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-        maxWidth: '400px',
-        textAlign: 'left'
-    },
-    formLabel: {
-        display: 'block',
-        marginBottom: '8px',
-        fontWeight: 'bold',
-        color: '#0A0759'
-    },
-    formInput: {
-        width: 'calc(100% - 20px)',
-        padding: '8px',
-        marginBottom: '10px',
-        border: '1px solid #ccc',
-        borderRadius: '4px'
-    },
-    formButton: {
-        width: '100%',
-        padding: '10px',
-        backgroundColor: '#007bff',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer'
-    },
-    formButtonHover: {
-        backgroundColor: '#0056b3'
-    },
-    formSpan: {
-        color: 'red',
-        fontSize: '12px'
-    }
-};
-
 class Login extends React.Component {
     constructor(props) {
         super(props);
@@ -109,16 +68,36 @@ class Login extends React.Component {
 
     render() {
         return (
-            <form onSubmit={ this.handleSubmit } style={styles.form}>
-                <label htmlFor="emailLogin" style={styles.formLabel}>Email:</label>
-                <input type="text" placeholder="Email here..." id="emailLogin" name="email" value={this.state.email} onChange={ this.handleChange } style={styles.formInput}/>
-                {this.state.problems.email && <span style={styles.formSpan}>{this.state.problems.email}</span>}
-                <br/>
-                <label htmlFor="passwordLogin" style={styles.formLabel}>Password:</label>
-                <input type="password" placeholder="Password here..." id="passwordLogin" name="password" value={this.state.password}  onChange={ this.handleChange } style={styles.formInput}/>
-                {this.state.problems.password && <span style={styles.formSpan}>{this.state.problems.password}</span>}
-                <br/>
-                <button type="submit" style={styles.formButton}>Login</button>
+            <form onSubmit={this.handleSubmit} className="bg-blue-700 rounded-lg p-8 flex flex-col space-y-4 w-full max-w-md mx-auto">
+                <div className="flex flex-col">
+                    <label htmlFor="emailLogin" className="text-white mb-2">Email:</label>
+                    <input
+                        type="text"
+                        placeholder="Email here..."
+                        id="emailLogin"
+                        name="email"
+                        value={this.state.email}
+                        onChange={this.handleChange}
+                        className="p-2 rounded border border-gray-300"
+                    />
+                    {this.state.problems.email && <span className="text-red-500 mt-1">{this.state.problems.email}</span>}
+                </div>
+                <div className="flex flex-col">
+                    <label htmlFor="passwordLogin" className="text-white mb-2">Password:</label>
+                    <input
+                        type="password"
+                        placeholder="Password here..."
+                        id="passwordLogin"
+                        name="password"
+                        value={this.state.password}
+                        onChange={this.handleChange}
+                        className="p-2 rounded border border-gray-300"
+                    />
+                    {this.state.problems.password && <span className="text-red-500 mt-1">{this.state.problems.password}</span>}
+                </div>
+                <button type="submit" className="bg-white text-blue-700 py-2 px-4 rounded hover:bg-gray-200 transition duration-300">
+                    Login
+                </button>
             </form>
         );
     }

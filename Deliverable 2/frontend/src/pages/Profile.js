@@ -119,7 +119,9 @@ class Profile extends React.Component {
 
         return (
             <div>
-                <h1>Profile</h1>
+                <header className="top-0 w-full p-4 flex justify-center z-10">
+                    <h1 className="font-lightning text-8xl">Sparky</h1>
+                </header>
                 <Header />
                 <ProfileComponent 
                     userId={user._id}

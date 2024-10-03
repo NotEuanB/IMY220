@@ -83,22 +83,32 @@ class Home extends React.Component {
 
     renderDefaultContent = () => {
         return (
-            <div>
+            <div className="flex-1 p-4">
                 <SongFeed songs={this.state.songs} />
                 <PlaylistFeed playlists={this.state.playlists} />
                 <CreateSong />
             </div>
         );
     }
-
+    
     render() {
         const { searchResults } = this.state;
         return (
-            <div>
-                <h1>Home</h1>
-                <Header />
-                <SearchInput onSearchResults={this.handleSearchResults} />
-                {searchResults ? this.renderSearchResults() : this.renderDefaultContent()}
+            <div className="flex flex-col min-h-screen">
+                <header className="top-0 w-full p-4 flex justify-center z-10">
+                    <h1 className="font-lightning text-8xl">Sparky</h1>
+                </header>
+                <div className="flex flex-1 pt-32">
+                    <div className="w-36 h-full flex flex-col p-4">
+                        <Header />
+                    </div>
+                    <div className="flex-1">
+                        <div className="p-4">
+                            <SearchInput onSearchResults={this.handleSearchResults} />
+                            {searchResults ? this.renderSearchResults() : this.renderDefaultContent()}
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
