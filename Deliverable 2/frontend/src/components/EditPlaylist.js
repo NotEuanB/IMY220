@@ -46,7 +46,7 @@ class EditPlaylist extends React.Component {
     render() {
         const { name, description } = this.state;
         return (
-            <form onSubmit={this.handleSubmit} className="p-4 bg-white rounded-lg shadow-md">
+            <form onSubmit={this.handleSubmit} className="p-4 rounded-lg shadow-md">
                 <div className="mb-4">
                     <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Edit playlist name</label>
                     <input 
