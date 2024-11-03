@@ -1,5 +1,6 @@
 import React from 'react';
 import Header from "../components/Header.js";
+import { Link } from 'react-router-dom';
 import SongFeed from '../components/SongFeed.js';
 import PlaylistFeed from '../components/PlaylistFeed.js';
 import SearchInput from '../components/SearchInput.js';
@@ -114,7 +115,7 @@ class Home extends React.Component {
         return (
             <div className="flex flex-col min-h-screen">
                 <header className="top-0 w-full p-4 flex justify-center z-10">
-                    <h1 className="font-lightning text-8xl">Sparky</h1>
+                    <Link to="/home" className="font-lightning text-8xl">Sparky</Link>
                 </header>
                 <div className="flex flex-1 pt-32">
                     <div className="w-36 h-full flex flex-col p-4">

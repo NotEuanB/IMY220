@@ -1,5 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Header from "../components/Header.js";
 import PlaylistComponent from '../components/PlaylistComponent.js';
 import EditPlaylist from '../components/EditPlaylist.js';
@@ -67,17 +68,30 @@ class Playlist extends React.Component {
         const isOwner = playlist.userIDs.includes(loggedInUserId);
 
         return (
-            <div>
-                <Header />
-                <PlaylistComponent 
-                    name={playlist.name} 
-                    description={playlist.description} 
-                    imageUrl={playlist.imageUrl} 
-                    songs={songs} 
-                />
-                {isOwner && <EditPlaylist playlistID={playlist.playlistID} name={playlist.name} description={playlist.description} />}
-                <ListComments comments={playlist.comments} />
-                {isOwner && <EditComment />}
+            <div className="flex flex-col min-h-screen">
+                <header className="top-0 w-full p-4 flex justify-center z-10">
+                    <Link to="/home" className="font-lightning text-8xl">Sparky</Link>
+                </header>
+                <div className="flex flex-1 pt-32">
+                    <div className="w-36 h-full flex flex-col p-4">
+                        <Header />
+                    </div>
+                    <div className="flex-1 p-4">
+                        <PlaylistComponent 
+                            name={playlist.name} 
+                            description={playlist.description} 
+                            imageUrl={playlist.imageUrl} 
+                            songs={songs} 
+                        />
+                        {isOwner && (
+                            <>
+                                <EditPlaylist playlistID={playlist.playlistID} name={playlist.name} description={playlist.description} />
+                                <EditComment />
+                            </>
+                        )}
+                        <ListComments comments={playlist.comments} />
+                    </div>
+                </div>
             </div>
         );
     }

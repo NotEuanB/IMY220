@@ -5,7 +5,8 @@ class CreateSong extends React.Component {
         super(props);
         this.state = {
             title: '',
-            link: ''
+            link: '',
+            message: ''
         };
     }
 
@@ -31,7 +32,8 @@ class CreateSong extends React.Component {
             if (response.ok) {
                 this.setState({
                     title: '',
-                    link: ''
+                    link: '',
+                    message: 'Song created successfully!'
                 });
             } else {
                 const errorData = await response.json();
@@ -43,34 +45,39 @@ class CreateSong extends React.Component {
     };
 
     render() {
-        const { title, link } = this.state;
+        const { title, link, message } = this.state;
 
         return (
-            <div>
-                <h2>Create a New Song</h2>
+            <div className="max-w-md ml-6 p-6 border border-gray-300 rounded-lg shadow-lg">
+                <h2 className="text-2xl font-bold mb-4">Create a New Song</h2>
                 <form onSubmit={this.handleSubmit}>
-                    <div>
-                        <label>Title:</label>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 font-bold mb-2">Title:</label>
                         <input
                             type="text"
                             name="title"
                             value={title}
                             onChange={this.handleChange}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md"
                             required
                         />
                     </div>
-                    <div>
-                        <label>Spotify Link:</label>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 font-bold mb-2">Spotify Link:</label>
                         <input
                             type="text"
                             name="link"
                             value={link}
                             onChange={this.handleChange}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md"
                             required
                         />
                     </div>
-                    <button type="submit">Create Song</button>
+                    <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">
+                        Create Song
+                    </button>
                 </form>
+                {message && <p className={`mt-4 ${message.startsWith('Error') ? 'text-red-500' : 'text-green-500'}`}>{message}</p>}
             </div>
         );
     }

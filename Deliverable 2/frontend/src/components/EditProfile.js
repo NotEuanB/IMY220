@@ -71,33 +71,42 @@ class EditProfile extends React.Component {
     render() {
         const { username, description, imageUrl } = this.state;
         return (
-            <form onSubmit={this.handleSubmit}>
-                <label htmlFor="username">Edit name here</label>
-                <input 
-                    type="text" 
-                    id="username" 
-                    value={username} 
-                    onChange={this.handleInputChange} 
-                />
-                <br/>
-                <label htmlFor="description">Edit description here</label>
-                <input 
-                    type="text" 
-                    id="description" 
-                    value={description} 
-                    onChange={this.handleInputChange} 
-                />
-                <br/>
-                <label htmlFor="profilePicture">Change profile picture</label>
-                <input 
-                    type="file" 
-                    id="profilePicture" 
-                    onChange={this.handleFileChange} 
-                />
-                <br/>
-                <img src={imageUrl} alt="Profile" style={{ width: '200px' }} />
-                <br/>
-                <button type="submit">Submit Changes</button>
+            <form onSubmit={this.handleSubmit} className="p-4 rounded-lg shadow-md">
+                <div className="mb-4">
+                    <label htmlFor="username" className="block text-gray-700 font-bold mb-2">Edit name here</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        value={username} 
+                        onChange={this.handleInputChange} 
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="description" className="block text-gray-700 font-bold mb-2">Edit description here</label>
+                    <input 
+                        type="text" 
+                        id="description" 
+                        value={description} 
+                        onChange={this.handleInputChange} 
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="profilePicture" className="block text-gray-700 font-bold mb-2">Change profile picture</label>
+                    <input 
+                        type="file" 
+                        id="profilePicture" 
+                        onChange={this.handleFileChange} 
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    />
+                </div>
+                <div className="mb-4">
+                    <img src={imageUrl} alt="Profile" className="w-32 h-32 rounded-full mx-auto" />
+                </div>
+                <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">
+                    Submit Changes
+                </button>
             </form>
         );
     }

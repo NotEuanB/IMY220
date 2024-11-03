@@ -37,16 +37,18 @@ class Followers extends React.Component {
     render() {
         const { followers } = this.state;
         return (
-            <div>
-                <h3>Followers</h3>
+            <div className="p-4 rounded-lg shadow-md mt-4">
+                <h3 className="text-xl font-semibold mb-2">Followers</h3>
                 {followers.length > 0 ? (
-                    followers.map((follower, index) => (
-                        <div key={index}>
-                            <ProfilePreview image={follower.imageUrl} username={follower.username} />
-                        </div>
-                    ))
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {followers.map((follower, index) => (
+                            <div key={index} className="bg-gray-100 p-4 rounded-lg shadow-sm">
+                                <ProfilePreview image={follower.imageUrl} username={follower.username} userId={follower._id} />
+                            </div>
+                        ))}
+                    </div>
                 ) : (
-                    <p>No followers available.</p>
+                    <p className="text-gray-700">No followers available.</p>
                 )}
             </div>
         );

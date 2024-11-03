@@ -1,5 +1,6 @@
 import React from 'react';
-import { useParams} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Header from "../components/Header.js";
 import ProfileComponent from '../components/ProfileComponent.js';
 import Followers from '../components/Followers.js';
@@ -17,6 +18,8 @@ class Profile extends React.Component {
             followers: [],
             following: [],
             loggedInUserId: null,
+            showEditProfile: false,
+            showCreatePlaylist: false,
         };
     }
 
@@ -29,6 +32,17 @@ class Profile extends React.Component {
         await this.fetchFollowers(id);
         await this.fetchFollowing(id);
         await this.checkFollowingStatus(id, loggedInUserId);
+    }
+
+    async componentDidUpdate(prevProps) {
+        const { id } = this.props.params;
+        if (prevProps.params.id !== id) {
+            await this.fetchUser(id);
+            await this.fetchPlaylists(id);
+            await this.fetchFollowers(id);
+            await this.fetchFollowing(id);
+            await this.checkFollowingStatus(id, this.state.loggedInUserId);
+        }
     }
 
     fetchUser = async (id) => {
@@ -126,8 +140,16 @@ class Profile extends React.Component {
         }
     };
 
+    toggleEditProfile = () => {
+        this.setState((prevState) => ({ showEditProfile: !prevState.showEditProfile }));
+    };
+
+    toggleCreatePlaylist = () => {
+        this.setState((prevState) => ({ showCreatePlaylist: !prevState.showCreatePlaylist }));
+    };
+
     render() {
-        const { user, playlists, followers, following, loggedInUserId, isFollowing } = this.state;
+        const { user, playlists, followers, following, loggedInUserId, isFollowing, showEditProfile, showCreatePlaylist } = this.state;
 
         if (!user) {
             return <div>Loading...</div>;
@@ -136,25 +158,43 @@ class Profile extends React.Component {
         const isOwnProfile = user._id === loggedInUserId;
 
         return (
-            <div>
+            <div className="flex flex-col min-h-screen">
                 <header className="top-0 w-full p-4 flex justify-center z-10">
-                    <h1 className="font-lightning text-8xl">Sparky</h1>
+                    <Link to="/home" className="font-lightning text-8xl">Sparky</Link>
                 </header>
-                <Header />
-                <ProfileComponent 
-                    userId={user._id}
-                    username={user.username} 
-                    description={user.description} 
-                    imageUrl={user.imageUrl} 
-                    playlists={playlists} 
-                    isFollowing={isFollowing}
-                    isOwnProfile={isOwnProfile}
-                />
-                <Followers userId={user._id} />
-                <Following userId={user._id} />
-                {isOwnProfile && <EditProfile username={user.username} description={user.description} imageUrl={user.imageUrl}/>}
-                {isOwnProfile && <CreatePlaylist />}
-                {isOwnProfile && <button onClick={this.handleDeleteAccount}>Delete account</button>}
+                <div className="flex flex-1 pt-32">
+                    <div className="w-36 h-full flex flex-col p-4">
+                        <Header />
+                    </div>
+                    <div className="flex-1 p-4">
+                        <ProfileComponent 
+                            userId={user._id}
+                            username={user.username} 
+                            description={user.description} 
+                            imageUrl={user.imageUrl} 
+                            playlists={playlists} 
+                            isFollowing={isFollowing}
+                            isOwnProfile={isOwnProfile}
+                        />
+                        <Followers userId={user._id} />
+                        <Following userId={user._id} />
+                        {isOwnProfile && (
+                            <>
+                                <button onClick={this.toggleEditProfile} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">
+                                    {showEditProfile ? 'Hide Edit Profile' : 'Edit Profile'}
+                                </button>
+                                {showEditProfile && <EditProfile username={user.username} description={user.description} imageUrl={user.imageUrl} />}
+                                <button onClick={this.toggleCreatePlaylist} className="mt-4 bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600">
+                                    {showCreatePlaylist ? 'Hide Create Playlist' : 'Create Playlist'}
+                                </button>
+                                {showCreatePlaylist && <CreatePlaylist />}
+                                <button onClick={this.handleDeleteAccount} className="mt-4 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600">
+                                    Delete account
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </div>
             </div>
         );
     }
