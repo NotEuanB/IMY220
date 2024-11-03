@@ -1,0 +1,152 @@
+[{
+  "_id": {
+    "$oid": "66fabdaaa9b1e75991c04af8"
+  },
+  "songID": "gupp-r",
+  "title": "Grow Up, Peter Pan - Remastered",
+  "link": "https://open.spotify.com/track/4LJ0BVHeu0RNOXFAZ8vbRe?si=a621d237bc804920",
+  "playlistIDs": [
+    "PL01"
+  ],
+  "userIDs": [
+    "user01"
+  ],
+  "dateAdded": {
+    "$date": "2024-05-04T22:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "66fabffda9b1e75991c04afb"
+  },
+  "songID": "cvtgt",
+  "title": "Chucky vs. The Giant Tortoise",
+  "link": "https://open.spotify.com/track/53HL4nLQfifN8gTtZwBzzc?si=da03b5056423498d",
+  "playlistIDs": [
+    "PL01",
+    "PL04"
+  ],
+  "userIDs": [
+    "user01"
+  ],
+  "dateAdded": {
+    "$date": "2024-05-05T22:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "66ff04782d4c540b53147d1a"
+  },
+  "songID": "sd",
+  "title": "Speed Demon",
+  "link": "https://open.spotify.com/track/16rvPyhsZXi5K6j5yYe3AS?si=63495448a7c54897",
+  "playlistIDs": [
+    "PL03"
+  ],
+  "userIDs": [],
+  "dateAdded": {
+    "$date": "2024-10-03T20:54:16.989Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "66ff7ffccc3db6f9da3d516e"
+  },
+  "songID": "t",
+  "title": "Testing",
+  "link": "https://open.spotify.com/track/687NVUObAS9tSROg51S1xp?si=9d1aaab133294b52",
+  "playlistIDs": [],
+  "userIDs": [],
+  "dateAdded": {
+    "$date": "2024-10-04T05:41:16.259Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6727c7b197e96529ada8ce4c"
+  },
+  "songID": "gu",
+  "title": "Given Up",
+  "link": "https://open.spotify.com/track/1fLlRApgzxWweF1JTf8yM5?si=8e1fcda4e9574c04",
+  "playlistIDs": [
+    "PL02",
+    "PL04"
+  ],
+  "userIDs": [],
+  "dateAdded": {
+    "$date": "2024-11-03T18:57:53.040Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6727d87197e96529ada8ce4e"
+  },
+  "songID": "p",
+  "title": "Prada",
+  "link": "https://open.spotify.com/track/59NraMJsLaMCVtwXTSia8i?si=ab26f858acdc4578",
+  "playlistIDs": [
+    "PL06"
+  ],
+  "userIDs": [],
+  "dateAdded": {
+    "$date": "2024-11-03T20:09:21.728Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6727d88997e96529ada8ce4f"
+  },
+  "songID": "lay",
+  "title": "Life After You",
+  "link": "https://open.spotify.com/track/2c1BSmrSeBEY9FxhzSiFWh?si=9048b75ddb7846bd",
+  "playlistIDs": [
+    "PL06"
+  ],
+  "userIDs": [],
+  "dateAdded": {
+    "$date": "2024-11-03T20:09:45.769Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6727d89a97e96529ada8ce50"
+  },
+  "songID": "j",
+  "title": "Jungle",
+  "link": "https://open.spotify.com/track/29e0Ua6WaDabP2zpGu8YIv?si=b3780fe97e3c40d4",
+  "playlistIDs": [
+    "PL05"
+  ],
+  "userIDs": [],
+  "dateAdded": {
+    "$date": "2024-11-03T20:10:02.229Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6727d8bc97e96529ada8ce51"
+  },
+  "songID": "ss",
+  "title": "Still Sleepless",
+  "link": "https://open.spotify.com/track/4vyG9ZhHT8MKJE5mTICMFC?si=cf16d0658147457f",
+  "playlistIDs": [],
+  "userIDs": [],
+  "dateAdded": {
+    "$date": "2024-11-03T20:10:36.671Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6727d8e097e96529ada8ce52"
+  },
+  "songID": "f",
+  "title": "Freaks",
+  "link": "https://open.spotify.com/track/7EkWXAI1wn8Ii883ecd9xr?si=a5f887e5503149f2",
+  "playlistIDs": [
+    "PL05"
+  ],
+  "userIDs": [],
+  "dateAdded": {
+    "$date": "2024-11-03T20:11:12.230Z"
+  }
+}]

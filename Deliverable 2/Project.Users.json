@@ -1,0 +1,135 @@
+[{
+  "_id": "user01",
+  "description": "This is an  new edited description",
+  "imageUrl": "/assets/images/user01-1730530040662.png",
+  "username": "EuanB",
+  "email": "euanbotha@gmail.com",
+  "password": "appelkoos",
+  "playlistIDs": [
+    "PL02"
+  ],
+  "followerIDs": [
+    "user02",
+    "user03"
+  ],
+  "followingIDs": [
+    "user02",
+    "user03"
+  ]
+},
+{
+  "_id": "user02",
+  "description": "I also have no idea what I am doing",
+  "imageUrl": "/assets/images/car.png",
+  "username": "NotEuan",
+  "email": "bothaeuan@gmail.com",
+  "password": "giftig",
+  "playlistIDs": [
+    "PL01"
+  ],
+  "followerIDs": [
+    "user01",
+    "user03"
+  ],
+  "followingIDs": [
+    "user01",
+    "user03"
+  ]
+},
+{
+  "_id": "user03",
+  "description": "",
+  "imageUrl": "/assets/images/user03-1730665790513.jpg",
+  "username": "test",
+  "email": "test@test.com",
+  "password": "test1234",
+  "playlistIDs": [
+    "PL04",
+    "PL05"
+  ],
+  "followerIDs": [
+    "user01",
+    "user02"
+  ],
+  "followingIDs": [
+    "user01",
+    "user02"
+  ]
+},
+{
+  "_id": "user04",
+  "description": "",
+  "imageUrl": "/assets/images/placeholder.png",
+  "username": "User4",
+  "email": "user4@test.com",
+  "password": "user4",
+  "playlistIDs": [],
+  "followerIDs": [],
+  "followingIDs": []
+},
+{
+  "_id": "user05",
+  "description": "",
+  "imageUrl": "/assets/images/placeholder.png",
+  "username": "User5",
+  "email": "user5@test.com",
+  "password": "user5",
+  "playlistIDs": [],
+  "followerIDs": [],
+  "followingIDs": []
+},
+{
+  "_id": "user06",
+  "description": "",
+  "imageUrl": "/assets/images/placeholder.png",
+  "username": "User6",
+  "email": "user6@test.com",
+  "password": "user6",
+  "playlistIDs": [],
+  "followerIDs": [],
+  "followingIDs": []
+},
+{
+  "_id": "user07",
+  "description": "",
+  "imageUrl": "/assets/images/placeholder.png",
+  "username": "User7",
+  "email": "user7@test.com",
+  "password": "user7",
+  "playlistIDs": [],
+  "followerIDs": [],
+  "followingIDs": []
+},
+{
+  "_id": "user08",
+  "description": "",
+  "imageUrl": "/assets/images/placeholder.png",
+  "username": "User8",
+  "email": "user8@test.com",
+  "password": "user8",
+  "playlistIDs": [],
+  "followerIDs": [],
+  "followingIDs": []
+},
+{
+  "_id": "user09",
+  "description": "",
+  "imageUrl": "/assets/images/placeholder.png",
+  "username": "User9",
+  "email": "user9@test.com",
+  "password": "user9",
+  "playlistIDs": [],
+  "followerIDs": [],
+  "followingIDs": []
+},
+{
+  "_id": "user010",
+  "description": "",
+  "imageUrl": "/assets/images/placeholder.png",
+  "username": "User10",
+  "email": "user10@test.com",
+  "password": "user10",
+  "playlistIDs": [],
+  "followerIDs": [],
+  "followingIDs": []
+}]

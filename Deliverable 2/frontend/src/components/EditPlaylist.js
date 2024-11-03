@@ -25,7 +25,7 @@ class EditPlaylist extends React.Component {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'user-id': userID // Send user ID in headers
+                'user-id': userID 
             },
             body: JSON.stringify({ name, description })
         })
@@ -46,24 +46,30 @@ class EditPlaylist extends React.Component {
     render() {
         const { name, description } = this.state;
         return (
-            <form onSubmit={this.handleSubmit}>
-                <label htmlFor="name">Edit playlist name</label>
-                <input 
-                    type="text" 
-                    id="name" 
-                    value={name} 
-                    onChange={this.handleInputChange} 
-                />
-                <br/>
-                <label htmlFor="description">Edit description</label>
-                <input 
-                    type="text" 
-                    id="description" 
-                    value={description} 
-                    onChange={this.handleInputChange} 
-                />
-                <br/>
-                <button type="submit">Edit Playlist</button>
+            <form onSubmit={this.handleSubmit} className="p-4 bg-white rounded-lg shadow-md">
+                <div className="mb-4">
+                    <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Edit playlist name</label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        value={name} 
+                        onChange={this.handleInputChange} 
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="description" className="block text-gray-700 font-bold mb-2">Edit description</label>
+                    <input 
+                        type="text" 
+                        id="description" 
+                        value={description} 
+                        onChange={this.handleInputChange} 
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    />
+                </div>
+                <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">
+                    Submit Changes
+                </button>
             </form>
         );
     }

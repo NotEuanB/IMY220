@@ -264,23 +264,24 @@ async function startServer() {
             if (!playlist) {
                 return res.status(404).json({ message: "Playlist not found" });
             }
-    
-            if (!playlist.userID.includes(loggedInUserId)) {
+        
+            if (!playlist.userIDs.includes(loggedInUserId)) {
                 return res.status(403).json({ message: "You are not the owner of this playlist" });
             }
-    
+        
             // Update the playlist
             const result = await PlaylistCollection.updateOne(
                 { playlistID: id },
                 { $set: { name, description } }
             );
-    
+        
             if (result.matchedCount === 0) {
                 return res.status(404).json({ message: "Playlist not found" });
             }
-    
+        
             res.status(200).json({ message: "Playlist updated successfully" });
         } catch (err) {
+            console.error('Error updating playlist:', err);
             res.status(500).json({ error: err.message });
         }
     });
