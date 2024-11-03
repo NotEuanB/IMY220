@@ -7,12 +7,15 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 var express = require('express');
 var _require = require('mongodb'),
   MongoClient = _require.MongoClient;
+var path = require('path');
+var fileUpload = require('express-fileupload');
 var url = "mongodb+srv://u21439631:aExeTfai05o4TaHm@imy220.jxnkm.mongodb.net/";
 var client = new MongoClient(url);
 
 // Create app
 var app = express();
 app.use(express.json());
+app.use(fileUpload());
 
 // Serve static files from the React app
 app.use(express["static"]('./frontend/public'));
@@ -20,17 +23,17 @@ function startServer() {
   return _startServer.apply(this, arguments);
 }
 function _startServer() {
-  _startServer = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee20() {
+  _startServer = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee23() {
     var db, SongCollection, PlaylistCollection, UserCollection, generateSongID, PORT;
-    return _regeneratorRuntime().wrap(function _callee20$(_context20) {
-      while (1) switch (_context20.prev = _context20.next) {
+    return _regeneratorRuntime().wrap(function _callee23$(_context23) {
+      while (1) switch (_context23.prev = _context23.next) {
         case 0:
           generateSongID = function _generateSongID(title) {
             return title.split(' ').map(function (word) {
               return word[0].toLowerCase();
             }).join('');
           };
-          _context20.next = 3;
+          _context23.next = 3;
           return client.connect();
         case 3:
           console.info("Connected to MongoDB");
@@ -269,7 +272,7 @@ function _startServer() {
                       imageUrl: '/assets/images/placeholder.png',
                       username: username,
                       email: email,
-                      hashedPassword: hashedPassword,
+                      password: password,
                       playlistIDs: [],
                       followerIDs: [],
                       followingIDs: []
@@ -1039,6 +1042,132 @@ function _startServer() {
             };
           }());
 
+          // Uploading and changing profile picture
+          app.post('/api/uploadProfilePicture', /*#__PURE__*/function () {
+            var _ref20 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee21(req, res) {
+              var userId, profilePicture, filePath;
+              return _regeneratorRuntime().wrap(function _callee21$(_context21) {
+                while (1) switch (_context21.prev = _context21.next) {
+                  case 0:
+                    if (!(!req.files || Object.keys(req.files).length === 0)) {
+                      _context21.next = 3;
+                      break;
+                    }
+                    console.error('No files were uploaded.');
+                    return _context21.abrupt("return", res.status(400).json({
+                      error: 'No files were uploaded.'
+                    }));
+                  case 3:
+                    userId = req.body.userId;
+                    profilePicture = req.files.profilePicture;
+                    filePath = path.join(__dirname, '../../frontend/public/assets/images', "".concat(userId, "-").concat(Date.now()).concat(path.extname(profilePicture.name)));
+                    console.log('File Path:', filePath);
+                    try {
+                      profilePicture.mv(filePath, /*#__PURE__*/function () {
+                        var _ref21 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee20(err) {
+                          var imageUrl;
+                          return _regeneratorRuntime().wrap(function _callee20$(_context20) {
+                            while (1) switch (_context20.prev = _context20.next) {
+                              case 0:
+                                if (!err) {
+                                  _context20.next = 3;
+                                  break;
+                                }
+                                console.error('Error moving file:', err);
+                                return _context20.abrupt("return", res.status(500).json({
+                                  error: err.message
+                                }));
+                              case 3:
+                                imageUrl = "/assets/images/".concat(path.basename(filePath));
+                                console.log('Image URL:', imageUrl);
+                                _context20.next = 7;
+                                return UserCollection.updateOne({
+                                  _id: userId
+                                }, {
+                                  $set: {
+                                    imageUrl: imageUrl
+                                  }
+                                });
+                              case 7:
+                                res.status(200).json({
+                                  imageUrl: imageUrl
+                                });
+                              case 8:
+                              case "end":
+                                return _context20.stop();
+                            }
+                          }, _callee20);
+                        }));
+                        return function (_x41) {
+                          return _ref21.apply(this, arguments);
+                        };
+                      }());
+                    } catch (err) {
+                      console.error('Error uploading profile picture:', err);
+                      res.status(500).json({
+                        error: err.message
+                      });
+                    }
+                  case 8:
+                  case "end":
+                    return _context21.stop();
+                }
+              }, _callee21);
+            }));
+            return function (_x39, _x40) {
+              return _ref20.apply(this, arguments);
+            };
+          }());
+
+          // Check if the logged-in user is following the profile they are viewing
+          app.get('/api/users/:id/isFollowing', /*#__PURE__*/function () {
+            var _ref22 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee22(req, res) {
+              var id, loggedInUserId, user;
+              return _regeneratorRuntime().wrap(function _callee22$(_context22) {
+                while (1) switch (_context22.prev = _context22.next) {
+                  case 0:
+                    id = req.params.id;
+                    loggedInUserId = req.headers['user-id'];
+                    _context22.prev = 2;
+                    _context22.next = 5;
+                    return UserCollection.findOne({
+                      _id: loggedInUserId,
+                      followingIDs: id
+                    });
+                  case 5:
+                    user = _context22.sent;
+                    if (!user) {
+                      _context22.next = 10;
+                      break;
+                    }
+                    return _context22.abrupt("return", res.status(200).json({
+                      isFollowing: true
+                    }));
+                  case 10:
+                    return _context22.abrupt("return", res.status(200).json({
+                      isFollowing: false
+                    }));
+                  case 11:
+                    _context22.next = 17;
+                    break;
+                  case 13:
+                    _context22.prev = 13;
+                    _context22.t0 = _context22["catch"](2);
+                    console.error('Error checking following status:', _context22.t0);
+                    res.status(500).json({
+                      error: _context22.t0.message
+                    });
+                  case 17:
+                  case "end":
+                    return _context22.stop();
+                }
+              }, _callee22, null, [[2, 13]]);
+            }));
+            return function (_x42, _x43) {
+              return _ref22.apply(this, arguments);
+            };
+          }());
+
           // Catch-all route to serve index.html for all pages
           app.get('*', function (req, res) {
             res.sendFile('index.html', {
@@ -1051,11 +1180,11 @@ function _startServer() {
           app.listen(PORT, function () {
             console.log("Server is running on port ".concat(PORT));
           });
-        case 31:
+        case 33:
         case "end":
-          return _context20.stop();
+          return _context23.stop();
       }
-    }, _callee20);
+    }, _callee23);
   }));
   return _startServer.apply(this, arguments);
 }

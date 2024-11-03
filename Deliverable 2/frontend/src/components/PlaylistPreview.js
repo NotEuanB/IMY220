@@ -70,22 +70,31 @@ class PlaylistPreview extends React.Component {
         }
 
         return (
-            <div>
-                <style>
-                    {`
-                        a:visited {
-                            color: inherit;
-                        }
-                    `}
-                </style>
-                <Link to={`/playlist/${id}`}>
-                    <img src={imageUrl} alt="Placeholder" style={{ width: '100px' }} />
-                </Link>
-                <Link to={`/playlist/${id}`} style={{ textDecoration: 'none' }}>
-                    <h3>{name}</h3>
-                </Link>
-                <p>{description}</p>
-                {isUserInPlaylist && <button onClick={this.handleDelete}>Remove from library</button>}
+            <div className="border border-black p-4 rounded-lg bg-blue-700 shadow-md text-white flex mx-1">
+                <div>
+                    <Link to={`/playlist/${id}`} className="block mb-2">
+                        <img 
+                            src={imageUrl} 
+                            alt="Playlist" 
+                            className="object-cover rounded-lg mx-auto" 
+                            style={{ width: '96px', height: '96px' }} // Inline styles as fallback
+                        />
+                    </Link>
+                </div>
+                <div>
+                    <Link to={`/playlist/${id}`} className="block text-xl font-semibold text-white hover:text-gray-300">
+                        {name}
+                    </Link>
+                    <p className="text-sm text-gray-300 mt-2">{description}</p>
+                    {isUserInPlaylist && (
+                        <button
+                            onClick={this.handleDelete}
+                            className="mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700 transition-colors"
+                        >
+                            Remove from library
+                        </button>
+                    )}
+                </div>
             </div>
         );
     }

@@ -6,13 +6,40 @@ class EditProfile extends React.Component {
         super(props);
         this.state = {
             username: props.username,
-            description: props.description
+            description: props.description,
+            imageUrl: props.imageUrl
         };
     }
 
     handleInputChange = (event) => {
         const { id, value } = event.target;
         this.setState({ [id]: value });
+    }
+
+    handleFileChange = (event) => {
+        const file = event.target.files[0];
+        const formData = new FormData();
+        const userId = getCookie('userId');
+        formData.append('profilePicture', file);
+        formData.append('userId', userId);
+    
+        fetch('http://localhost:3000/api/uploadProfilePicture', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw new Error(err.error); });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Upload successful:', data);
+            this.setState({ imageUrl: data.imageUrl });
+        })
+        .catch(error => {
+            console.error('Error uploading profile picture:', error);
+        });
     }
 
     handleSubmit = (event) => {
@@ -42,7 +69,7 @@ class EditProfile extends React.Component {
     }
 
     render() {
-        const { username, description } = this.state;
+        const { username, description, imageUrl } = this.state;
         return (
             <form onSubmit={this.handleSubmit}>
                 <label htmlFor="username">Edit name here</label>
@@ -60,6 +87,15 @@ class EditProfile extends React.Component {
                     value={description} 
                     onChange={this.handleInputChange} 
                 />
+                <br/>
+                <label htmlFor="profilePicture">Change profile picture</label>
+                <input 
+                    type="file" 
+                    id="profilePicture" 
+                    onChange={this.handleFileChange} 
+                />
+                <br/>
+                <img src={imageUrl} alt="Profile" style={{ width: '200px' }} />
                 <br/>
                 <button type="submit">Submit Changes</button>
             </form>

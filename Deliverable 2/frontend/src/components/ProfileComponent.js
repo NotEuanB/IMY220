@@ -36,28 +36,32 @@ class ProfileComponent extends React.Component {
     }
 
     render() {
-        const { imageUrl, username, description } = this.props;
+        const { imageUrl, username, description, isFollowing, isOwnProfile } = this.props;
         const { playlists } = this.state;
 
         return (
             <div>
-                <img src={imageUrl} alt="Placeholder" style={{ width: '200px' }} />
+                <img src={imageUrl} alt="Profile" style={{ width: '200px' }} />
                 <h2>{username}</h2>
-                <p>{description}</p>
-                
-                <hr/>
-
-                <h2>Playlists</h2>
-                {playlists.map((playlist, index) => (
-                    <div key={index}>
-                        <PlaylistPreview 
-                            id={playlist.playlistID} 
-                            name={playlist.name} 
-                            description={playlist.description} 
-                            imageUrl={playlist.imageUrl} 
-                        />
-                    </div>
-                ))}
+                {isFollowing || isOwnProfile ? (
+                    <>
+                        <p>{description}</p>
+                        <hr/>
+                        <h2>Playlists</h2>
+                        {playlists.map((playlist, index) => (
+                            <div key={index}>
+                                <PlaylistPreview 
+                                    id={playlist.playlistID} 
+                                    name={playlist.name} 
+                                    description={playlist.description} 
+                                    imageUrl={playlist.imageUrl} 
+                                />
+                            </div>
+                        ))}
+                    </>
+                ) : (
+                    <p>You must follow this user to see more details.</p>
+                )}
             </div>
         );
     }

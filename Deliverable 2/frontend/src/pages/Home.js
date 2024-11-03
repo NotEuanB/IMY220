@@ -14,7 +14,9 @@ class Home extends React.Component {
         songs: [],
         playlists: [],
         searchResults: null,
-        searchType: null
+        searchType: null,
+        currentView: 'songs', // Add a state variable to keep track of the current view
+        showCreateSong: false // Add a state variable to keep track of the visibility of the CreateSong component
     };
 
     componentDidMount() {
@@ -61,6 +63,10 @@ class Home extends React.Component {
         this.setState({ searchResults: results, searchType: type });
     }
 
+    toggleCreateSong = () => {
+        this.setState(prevState => ({ showCreateSong: !prevState.showCreateSong }));
+    }
+
     renderSearchResults = () => {
         const { searchResults, searchType } = this.state;
         if (!searchResults) return null;
@@ -82,11 +88,23 @@ class Home extends React.Component {
     }
 
     renderDefaultContent = () => {
+        const { currentView, songs, playlists, showCreateSong } = this.state;
         return (
             <div className="flex-1 p-4">
-                <SongFeed songs={this.state.songs} />
-                <PlaylistFeed playlists={this.state.playlists} />
-                <CreateSong />
+                <div className="flex justify-center mb-4">
+                    <button onClick={() => this.setState({ currentView: 'songs' })} className="mr-2">Songs</button>
+                    <button onClick={() => this.setState({ currentView: 'playlists' })}>Playlists</button>
+                </div>
+                {currentView === 'songs' && <SongFeed songs={songs} />}
+                {currentView === 'playlists' && <PlaylistFeed playlists={playlists} />}
+                {currentView === 'songs' && (
+                    <>
+                        <button onClick={this.toggleCreateSong} className="mt-4">
+                            {showCreateSong ? 'Cancel' : 'Add New Song'}
+                        </button>
+                        {showCreateSong && <CreateSong />}
+                    </>
+                )}
             </div>
         );
     }

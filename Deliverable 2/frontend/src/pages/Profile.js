@@ -28,6 +28,7 @@ class Profile extends React.Component {
         await this.fetchPlaylists(id);
         await this.fetchFollowers(id);
         await this.fetchFollowing(id);
+        await this.checkFollowingStatus(id, loggedInUserId);
     }
 
     fetchUser = async (id) => {
@@ -108,8 +109,25 @@ class Profile extends React.Component {
         }
     };
 
+    checkFollowingStatus = async (profileId, loggedInUserId) => {
+        try {
+            const response = await fetch(`/api/users/${profileId}/isFollowing`, {
+                headers: {
+                    'user-id': loggedInUserId,
+                },
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            this.setState({ isFollowing: data.isFollowing });
+        } catch (error) {
+            console.log("Error checking following status:", error);
+        }
+    };
+
     render() {
-        const { user, playlists, followers, following, loggedInUserId } = this.state;
+        const { user, playlists, followers, following, loggedInUserId, isFollowing } = this.state;
 
         if (!user) {
             return <div>Loading...</div>;
@@ -129,10 +147,12 @@ class Profile extends React.Component {
                     description={user.description} 
                     imageUrl={user.imageUrl} 
                     playlists={playlists} 
+                    isFollowing={isFollowing}
+                    isOwnProfile={isOwnProfile}
                 />
                 <Followers userId={user._id} />
                 <Following userId={user._id} />
-                {isOwnProfile && <EditProfile username={user.username} description={user.description} />}
+                {isOwnProfile && <EditProfile username={user.username} description={user.description} imageUrl={user.imageUrl}/>}
                 {isOwnProfile && <CreatePlaylist />}
                 {isOwnProfile && <button onClick={this.handleDeleteAccount}>Delete account</button>}
             </div>

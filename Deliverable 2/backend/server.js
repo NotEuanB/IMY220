@@ -1,5 +1,7 @@
 const express = require('express');
 const { MongoClient } = require('mongodb');
+const path = require('path');
+const fileUpload = require('express-fileupload');
 
 const url = "mongodb+srv://u21439631:aExeTfai05o4TaHm@imy220.jxnkm.mongodb.net/";
 const client = new MongoClient(url);
@@ -7,6 +9,7 @@ const client = new MongoClient(url);
 // Create app
 const app = express();
 app.use(express.json()); 
+app.use(fileUpload());
 
 // Serve static files from the React app
 app.use(express.static('./frontend/public'));
@@ -122,7 +125,7 @@ async function startServer() {
                 imageUrl: '/assets/images/placeholder.png', 
                 username, 
                 email,
-                hashedPassword,
+                password,
                 playlistIDs: [],
                 followerIDs: [],
                 followingIDs: [] };
@@ -451,6 +454,61 @@ async function startServer() {
         } catch (error) {
             console.error('Error searching:', error);
             res.status(500).json({ message: 'Internal server error' });
+        }
+    });
+
+    // Uploading and changing profile picture
+    app.post('/api/uploadProfilePicture', async (req, res) => {
+        if (!req.files || Object.keys(req.files).length === 0) {
+            console.error('No files were uploaded.');
+            return res.status(400).json({ error: 'No files were uploaded.' });
+        }
+
+        const userId = req.body.userId;
+        const profilePicture = req.files.profilePicture;
+
+
+        const filePath = path.join(__dirname, '../../frontend/public/assets/images', `${userId}-${Date.now()}${path.extname(profilePicture.name)}`);
+        console.log('File Path:', filePath);
+
+        try {
+            profilePicture.mv(filePath, async (err) => {
+                if (err) {
+                    console.error('Error moving file:', err);
+                    return res.status(500).json({ error: err.message });
+                }
+
+                const imageUrl = `/assets/images/${path.basename(filePath)}`;
+                console.log('Image URL:', imageUrl);
+
+                await UserCollection.updateOne(
+                    { _id: userId },
+                    { $set: { imageUrl } }
+                );
+
+                res.status(200).json({ imageUrl });
+            });
+        } catch (err) {
+            console.error('Error uploading profile picture:', err);
+            res.status(500).json({ error: err.message });
+        }
+    });
+
+    // Check if the logged-in user is following the profile they are viewing
+    app.get('/api/users/:id/isFollowing', async (req, res) => {
+        const { id } = req.params;
+        const loggedInUserId = req.headers['user-id'];
+
+        try {
+            const user = await UserCollection.findOne({ _id:loggedInUserId, followingIDs: id });
+            if (user) {
+                return res.status(200).json({ isFollowing: true });
+            } else {
+                return res.status(200).json({ isFollowing: false });
+            }
+        } catch (err) {
+            console.error('Error checking following status:', err);
+            res.status(500).json({ error: err.message });
         }
     });
 
